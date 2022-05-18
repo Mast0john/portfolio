@@ -274,7 +274,7 @@ const Menu = () => {
               Resume&nbsp;
               <a
                 className="resume-text-button"
-                href="../../static/%5BFR%5Dresume.pdf"
+                href="/%5BFR%5Dresume.pdf"
                 target="_blank"
                 rel="noopener noreferrer">
                 FR
@@ -284,7 +284,7 @@ const Menu = () => {
               </label>
               <a
                 className="resume-text-button"
-                href="../../static/%5BEN%5Dresume.pdf"
+                href="/%5BEN%5Dresume.pdf"
                 target="_blank"
                 rel="noopener noreferrer">
                 EN
