@@ -236,7 +236,7 @@ const Nav = ({ isHome }) => {
                     Resume&nbsp;
                     <a
                       className="resume-text-button"
-                      href="/[FR]resume.pdf"
+                      href="../../content/CV/[FR]resume.pdf"
                       target="_blank"
                       rel="noopener noreferrer">
                       FR
@@ -246,7 +246,7 @@ const Nav = ({ isHome }) => {
                     </label>
                     <a
                       className="resume-text-button"
-                      href="/[EN]resume.pdf"
+                      href="../../content/CV/[EN]resume.pdf"
                       target="_blank"
                       rel="noopener noreferrer">
                       EN
