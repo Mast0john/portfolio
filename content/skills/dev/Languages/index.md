@@ -26,7 +26,7 @@ logo6: './logos/xml.png'
 txtlogo6: 'XML'
 url6: 'https://en.wikipedia.org/wiki/XML'
 
-logo7: './logos/c#.png'
+logo7: './logos/c-sharp.png'
 txtlogo7: 'C#'
 url7: 'https://en.wikipedia.org/wiki/C_Sharp_(programming_language)'
 
