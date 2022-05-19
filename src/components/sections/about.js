@@ -155,6 +155,9 @@ const About = () => {
               engineering team at <a href="https://www.afibel.com/fr/">Afibel</a> where I worked
               on a wide variety of interesting and meaningful projects on a daily basis.
             </p>
+            <p>
+              Currently Web & ERP Developer - <a href="https://www.progiteam.fr/">Progiteam</a> - Divalto ERP Integrator.
+            </p>
 
             <p>Here are a few technologies I've been working with recently:</p>
           </div>
