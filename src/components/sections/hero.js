@@ -31,7 +31,7 @@ const StyledHeroSection = styled.section`
   }
   .glitch:before, .glitch:after {
     display: block;
-    content: 'Guigui Lelasseur.';
+    content: 'Jonathan Heyman.';
     position: absolute;
     top: 0;
     left: 0;
@@ -106,7 +106,7 @@ const Hero = () => {
   }, []);
 
   const one = <h1>Hi, my name is</h1>;
-  const two = <h2 className="big-heading glitch">Guigui Lelasseur.</h2>;
+  const two = <h2 className="big-heading glitch">Jonathan Heyman.</h2>;
   const three = <h3 className="big-heading">I build things for the web.</h3>;
   const four = (
     <p>
