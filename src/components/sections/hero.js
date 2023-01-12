@@ -31,7 +31,7 @@ const StyledHeroSection = styled.section`
   }
   .glitch:before, .glitch:after {
     display: block;
-    content: 'Jonathan Heyman.';
+    content: 'Guigui Lelasseur.';
     position: absolute;
     top: 0;
     left: 0;
