@@ -15,7 +15,7 @@ jobs:
       with:
         node-version: '12.x'
     - run: npm install -g gatsby-cli
-    - run: nvm install
+    - run: npm install
     - run: yarn
     - run: npm start
     - run: npm run build
