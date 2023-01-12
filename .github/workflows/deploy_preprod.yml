@@ -14,7 +14,12 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
+    - run: npm install -g gatsby-cli
+    - run: nvm install
+    - run: yarn
+    - run: npm start
     - run: npm run build
+    - run: npm run serve
     # Deploy the gatsby build to Netlify
     - uses: netlify/actions/cli@master
       env:
