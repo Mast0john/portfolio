@@ -3,6 +3,8 @@ name: Deploy PROD - Build and Deploy to Netlify every hour
 on:
   schedule:
     - cron: '0 */2 * * *'
+  push:
+    branches: [ prod ]
 
 jobs:
   build:
@@ -14,8 +16,11 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
+    - run: npm install -g gatsby-cli
     - run: npm install
+    - run: yarn
     - run: npm run build
+    - run: npm run serve
     # Deploy the gatsby build to Netlify
     - uses: netlify/actions/cli@master
       env:
