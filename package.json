@@ -64,7 +64,7 @@
     "react-dom": "^16.10.2",
     "react-helmet": "^6.1.0",
     "react-masonry-css": "^1.0.14",
-    "react-particles-js": "^3.4.1",
+    "react-tsparticles": "^2.7.1",
     "react-switch": "^6.0.0",
     "react-transition-group": "^4.3.0",
     "scrollreveal": "^4.0.5",
