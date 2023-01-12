@@ -3,8 +3,6 @@ name: Deploy PREPROD - Build and Deploy to Netlify every hour
 on:
   push:
     branches: [ preprod ]
-  schedule:
-    - cron: '0 */2 * * *'
 
 jobs:
   build:
