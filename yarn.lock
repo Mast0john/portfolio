@@ -12559,13 +12559,6 @@ react-masonry-css@^1.0.14:
   resolved "https://registry.yarnpkg.com/react-masonry-css/-/react-masonry-css-1.0.14.tgz#2ac1ca7bb2c7e96826f7da3accc9e95ae12b2f65"
   integrity sha512-oAPVOCMApTT0HkxZJy84yU1EWaaQNZnJE0DjDMy/L+LxZoJEph4RRXsT9ppPKbFSo/tCzj+cCLwiBHjZmZ2eXA==
 
-react-particles-js@^3.4.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/react-particles-js/-/react-particles-js-3.4.1.tgz#e0f17ae1ddb07d01ce911448db76cd59726fe666"
-  integrity sha512-c3+vITUMN9RlgbERZYd9Kzvjmf49ENp07+9+NDLvE1Jf9euabrJi/q6gCCcv5foxGHBYjHnGs47Tusmrl0/+GQ==
-  dependencies:
-    lodash "^4.17.11"
-    tsparticles "^1.18.10"
 
 react-refresh@^0.8.3:
   version "0.8.3"
