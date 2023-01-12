@@ -1,61 +1,26 @@
-name: Deploy PROD - Release created
+name: Deploy PROD - Build and Deploy to Netlify every hour
 
 on:
-  release:
-    types:
-    - created
-    paths-ignore:
-    - 'README.md'
-
-# Environment variables available to all jobs and steps in this workflows
-env:
-  PROJECT: medium
-  GKE_ZONE: us-west2
-  GKE_CLUSTER: meidum-prod
-  NAMESPACE: prod
-  ENV: prod
-  GITHUB_SHA: ${{ github.sha }}
-  REGISTRY_HOSTNAME: gcr.io
-  SERVICE_NAME: mediumpod
+  schedule:
+    - cron: '0 */2 * * *'
 
 jobs:
-  release_workflow:
-    name: Deploy PROD - Release created
-    runs-on: ubuntu-18.04
+  build:
+    runs-on: ubuntu-latest
+
     steps:
-
-    # Clone the repository
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    # Setup Admin gcloud CLI
-    - name: Configure Admin Google Cloud Account
-      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+    - uses: actions/checkout@v1
+    # https://github.com/actions/setup-node#usage
+    - uses: actions/setup-node@v1
       with:
-        version: '270.0.0'
-        service_account_key: ${{ secrets.REGISTRY_SA }}
-
-    # Configure docker to use the gcloud command-line tool as a credential helper
-    - name: Configure Docker
-      run: |
-        gcloud auth configure-docker
-    # Pull reference Docker image
-    - name: Pull Image
-      run: |
-        docker pull $REGISTRY_HOSTNAME/$ADMIN_PROJECT/$SERVICE_NAME:${GITHUB_REF##*/}
-    # Setup Env GKE
-    - name: Configure Cluster
-      run: gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $PROJECT
-
-    # Configuring deploy files
-    - name: Configuring Deployment
-      run: | 
-        sed -i \
-          -e 's#newTag: .*#'"newTag: ${GITHUB_REF##*/}"'#' \
-          k8s/overlays/$NAMESPACE/kustomization.yml
-    # Deploy to GKE cluster
-    - name: Deployment
-      run: |
-        kubectl apply -k k8s/overlays/$NAMESPACE
-        DEPLOYMENT_NAME=`sed -n -e 's/^.*app: //p' k8s/base/kustomization.yml`
-        kubectl rollout status deployment/$DEPLOYMENT_NAME -n $NAMESPACE --timeout=6m
+        node-version: '12.x'
+    - run: npm install
+    - run: npm run build
+    # Deploy the gatsby build to Netlify
+    - uses: netlify/actions/cli@master
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.bsTwitbygPWeOixL3zD0HtkB05wd2SjBFNugFiksScc }}
+        NETLIFY_SITE_ID: ${{ secrets.ddde60a2-f960-460d-bb07-a47ebe28949a }}
+      with:
+        args: deploy --dir=public --prod
+        secrets: '["NETLIFY_AUTH_TOKEN", "NETLIFY_SITE_ID"]'
