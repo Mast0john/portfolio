@@ -1,4 +1,4 @@
-name: Deploy PROD - Build and Deploy to Netlify every hour
+name: Deploy PROD - Build and Deploy to Netlify
 
 on:
   push:
