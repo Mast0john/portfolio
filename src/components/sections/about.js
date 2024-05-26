@@ -1,9 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
 import Img from 'gatsby-image';
 import styled from 'styled-components';
 import { srConfig } from '@config';
 import sr from '@utils/sr';
+import { Link, Trans, useTranslation } from 'gatsby-plugin-react-i18next';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 const StyledAboutSection = styled.section`
   max-width: 900px;
@@ -114,6 +116,8 @@ const StyledPic = styled.div`
 `;
 
 const About = () => {
+  const { t } = useTranslation();
+
   const data = useStaticQuery(graphql`
     query {
       avatar: file(sourceInstanceName: { eq: "images" }, relativePath: { eq: "me.jpg" }) {
@@ -136,30 +140,39 @@ const About = () => {
 
   return (
     <StyledAboutSection id="about" ref={revealContainer}>
-      <h2 className="numbered-heading">About Me</h2>
-
       <div className="inner">
         <StyledText>
           <div>
-            <p>Hello! I'm Jonathan, a software engineer based in Lille, FR.</p>
-
+            <h2 className="numbered-heading">{t("About Me")}</h2>
+            <p>{t("Software engineer based in Lille, FR.")}</p>
             <p>
-              I enjoy creating things that live on the internet, whether that be websites,
-              applications, or anything in between. My goal is to always build products that provide
-              pixel-perfect, performant experiences.
+              <Trans>
+                I enjoy creating things that live on the internet, whether that be websites,
+                applications, or anything in between. My goal is to always build products that provide
+                pixel-perfect, performant experiences.
+              </Trans>
             </p>
-
             <p>
-              Shortly after graduating from{' '}
-              <a href="https://arras.cesi.fr/ecoles-formations/">Exia Cesi School</a>, I started as a Freelance and after I joined the
+              <Trans>Shortly after graduating from{' '}
+                <a href="https://arras.cesi.fr/ecoles-formations/">Exia Cesi School</a>, I started as a Freelance and after I joined the
               engineering team at <a href="https://www.afibel.com/fr/">Afibel</a> where I worked
               on a wide variety of interesting and meaningful projects on a daily basis.
+              </Trans>
             </p>
             <p>
-              Currently Web & ERP Developer - <a href="https://www.progiteam.fr/">Progiteam</a> - Divalto ERP Integrator.
+              Graduated with a master's degree in IS from <a href="https://enigma-school.com/">Enigma School</a>.
+              In particular, I worked on an end-of-study <a className="resume-text-button"
+                href="/dissertation.pdf"
+                target="_blank"
+                rel="noopener noreferrer">thesis</a> concerning the development and management of an application in connected/disconnected mode to an ERP using WinDev.
+            </p>
+            <p>
+              <Trans>
+                Lately Web & ERP Developer - <a href="https://www.progiteam.fr/">Progiteam</a> - Divalto ERP Integrator.
+              </Trans>
             </p>
 
-            <p>Here are a few technologies I've been working with recently:</p>
+            <p><Trans>Here are a few technologies I've been working with recently:</Trans></p>
           </div>
 
           <ul className="skills-list">

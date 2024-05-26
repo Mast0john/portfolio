@@ -538,11 +538,24 @@ const Skills = () => {
   const tabs3 = useRef([]);
 
   const [showMoreDev, setShowMoreDev] = useState(true);
-  const skillsDevToShow = showMoreDev ? devSkillsData : '';
   const [showMoreDesign, setShowMoreDesign] = useState(false);
-  const skillsDesignToShow = showMoreDesign ? designSkillsData : '';
   const [showMoreLanguages, setShowMoreLanguages] = useState(false);
-  const skillsLanguagesToShow = showMoreLanguages ? languagesSkillsData : '';
+
+  const displayDev = {
+    display: showMoreDev ? 'flex' : 'none',
+  };
+
+  const displayDesign = {
+    display: showMoreDesign ? 'flex' : 'none',
+  };
+
+  const displayLanguages = {
+    display: showMoreLanguages ? 'flex' : 'none',
+  };
+
+  const skillsDevToShow = showMoreDev ? devSkillsData : '';
+  const skillsDesignToShow = showMoreDesign ? designSkillsData : '' && !showMoreDev && !showMoreLanguages;
+  const skillsLanguagesToShow = showMoreLanguages ? languagesSkillsData : '' && !showMoreDev && !showMoreDesign;
 
   const revealContainer = useRef(null);
   useEffect(() => sr.reveal(revealContainer.current, srConfig()), []);
@@ -572,7 +585,7 @@ const Skills = () => {
     }
     // If we're at the start, move to the end
     if (tab2Focus < 0) {
-      setTab2Focus(tabs.current.length - 1);
+      setTab2Focus(tabs2.current.length - 1);
     }
   };
   const focusTab3 = () => {
@@ -586,7 +599,7 @@ const Skills = () => {
     }
     // If we're at the start, move to the end
     if (tab3Focus < 0) {
-      setTab3Focus(tabs.current.length - 1);
+      setTab3Focus(tabs3.current.length - 1);
     }
   };
 
@@ -654,18 +667,6 @@ const Skills = () => {
     }
   };
 
-  const displayDev = {
-    display: showMoreDev ? 'flex' : 'none',
-  };
-
-  const displayDesign = {
-    display: showMoreDesign ? 'flex' : 'none',
-  };
-
-  const displayLanguages = {
-    display: showMoreLanguages ? 'flex' : 'none',
-  };
-
   const breakpointColumnsObj = {
     default: 8,
     1100: 3,
@@ -679,13 +680,13 @@ const Skills = () => {
 
       <div className="inner">
 
-        <button className="more-button" onClick={() => setShowMoreDev(!showMoreDev && !showMoreDesign && !showMoreLanguages)}>
+        <button className="more-button" onClick={() => setShowMoreDev(!showMoreDev)}>
           {showMoreDev ? '-' : '+'} Development
         </button>
-        <button className="more-button" onClick={() => setShowMoreDesign(!showMoreDev && !showMoreDesign && !showMoreLanguages)}>
+        <button className="more-button" onClick={() => setShowMoreDesign(!showMoreDesign)}>
           {showMoreDesign ? '-' : '+'} Design
         </button>
-        <button className="more-button" onClick={() => setShowMoreLanguages(!showMoreDev && !showMoreDesign && !showMoreLanguages)}>
+        <button className="more-button" onClick={() => setShowMoreLanguages(!showMoreLanguages)}>
           {showMoreLanguages ? '-' : '+'} Languages
         </button>
 
@@ -965,7 +966,7 @@ const Skills = () => {
             })}
           <StyledHighlightLanguages activeTab3Id={activeTab3Id}/>
         </StyledTabList>
-        <StyledTabPanels style={displayLanguages}>
+        <StyledTabPanels style={displayLanguages }>
           {skillsLanguagesToShow &&
           skillsLanguagesToShow.map(({ node }, k) => {
             const { frontmatter, html } = node;

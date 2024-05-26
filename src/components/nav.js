@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'gatsby';
 import PropTypes from 'prop-types';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import styled, { css } from 'styled-components';
@@ -12,6 +11,7 @@ import { ThemeToggler } from 'gatsby-plugin-dark-mode';
 import useSound from 'use-sound';
 import popUpOn from '../sounds/switch-on.mp3';
 import popUpOff from '../sounds/switch-off.mp3';
+import { Link, useI18next } from 'gatsby-plugin-react-i18next';
 
 const StyledHeader = styled.header`
   ${({ theme }) => theme.mixins.flexBetween};
@@ -86,6 +86,10 @@ const StyledNav = styled.nav`
       }
     }
   }
+
+  li {
+      list-style-type: none
+  }
 `;
 
 const StyledLinks = styled.div`
@@ -148,6 +152,7 @@ const StyledLinks = styled.div`
 `;
 
 const Nav = ({ isHome }) => {
+  const { languages, changeLanguage } = useI18next();
   const [isMounted, setIsMounted] = useState(!isHome);
   const scrollDirection = useScrollDirection('down');
   const [scrolledToTop, setScrolledToTop] = useState(true);
@@ -228,29 +233,57 @@ const Nav = ({ isHome }) => {
               ))}
             </TransitionGroup>
           </ol>
+          {/*<TransitionGroup component={null}>*/}
+          {/*  {isMounted && (*/}
+          {/*    <CSSTransition classNames={fadeDownClass} timeout={timeout}>*/}
+          {/*      <div style={{ transitionDelay: `${isHome ? navLinks.length * 100 : 0}ms` }}>*/}
+          {/*        <p className="resume-text">*/}
+          {/*          Resume&nbsp;*/}
+          {/*          <a*/}
+          {/*            className="resume-text-button"*/}
+          {/*            href="/%5BFR%5Dresume.pdf"*/}
+          {/*            target="_blank"*/}
+          {/*            rel="noopener noreferrer">*/}
+          {/*            FR*/}
+          {/*          </a>*/}
+          {/*          <label className="resume-pipe">*/}
+          {/*            |*/}
+          {/*          </label>*/}
+          {/*          <a*/}
+          {/*            className="resume-text-button"*/}
+          {/*            href="/%5BEN%5Dresume.pdf"*/}
+          {/*            target="_blank"*/}
+          {/*            rel="noopener noreferrer">*/}
+          {/*            EN*/}
+          {/*          </a>*/}
+          {/*        </p>*/}
+          {/*      </div>*/}
+          {/*    </CSSTransition>*/}
+          {/*  )}*/}
+          {/*</TransitionGroup>*/}
           <TransitionGroup component={null}>
             {isMounted && (
               <CSSTransition classNames={fadeDownClass} timeout={timeout}>
                 <div style={{ transitionDelay: `${isHome ? navLinks.length * 100 : 0}ms` }}>
                   <p className="resume-text">
-                    Resume&nbsp;
-                    <a
-                      className="resume-text-button"
-                      href="/%5BFR%5Dresume.pdf"
-                      target="_blank"
-                      rel="noopener noreferrer">
-                      FR
-                    </a>
-                    <label className="resume-pipe">
-                      |
-                    </label>
-                    <a
-                      className="resume-text-button"
-                      href="/%5BEN%5Dresume.pdf"
-                      target="_blank"
-                      rel="noopener noreferrer">
-                      EN
-                    </a>
+                    {languages.map(lng => (
+                      <li key={lng}>
+                        <a
+                          className="resume-text-button"
+                          href="#"
+                          onClick={e => {
+                            e.preventDefault();
+                            changeLanguage(lng);
+                          }}
+                        >
+                          {lng}
+                        </a>
+                        <label className="resume-pipe">
+                          |
+                        </label>
+                      </li>
+                    ))}
+                    {/*rel="noopener noreferrer"*/}
                   </p>
                 </div>
               </CSSTransition>

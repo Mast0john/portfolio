@@ -4,7 +4,7 @@ module.exports = {
   socialMedia: [
     {
       name: 'GitHub',
-      url: 'https://github.com/',
+      url: 'https://github.com/Mast0john',
     },
     {
       name: 'Instagram',
@@ -44,6 +44,10 @@ module.exports = {
     {
       name: 'Work',
       url: '/work',
+    },
+    {
+      name: 'Resume',
+      url: '/resume',
     },
     {
       name: 'Contact',

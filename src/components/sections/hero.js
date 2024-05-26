@@ -3,6 +3,8 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import styled from 'styled-components';
 import { email } from '@config';
 import { navDelay, loaderDelay } from '@utils';
+import { Link, Trans, useTranslation } from 'gatsby-plugin-react-i18next';
+import { graphql } from 'gatsby';
 
 const StyledHeroSection = styled.section`
   ${({ theme }) => theme.mixins.flexCenter};
@@ -98,6 +100,8 @@ const StyledHeroSection = styled.section`
 `;
 
 const Hero = () => {
+  const { t } = useTranslation();
+
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -105,18 +109,18 @@ const Hero = () => {
     return () => clearTimeout(timeout);
   }, []);
 
-  const one = <h1>Hi, my name is</h1>;
+  const one = <h1><Trans>Hi, my name is</Trans></h1>;
   const two = <h2 className="big-heading glitch">Jonathan Heyman.</h2>;
-  const three = <h3 className="big-heading">I build things for the web.</h3>;
+  const three = <h3 className="big-heading">{t("I build things for the web.")}</h3>;
   const four = (
-    <p>
+    <p><Trans>
       I'm a software engineer based in Lille, FR specializing in building (and occasionally
       designing) exceptional websites, applications, and everything in between.
-    </p>
+    </Trans></p>
   );
   const five = (
     <a href={`mailto:${email}`} className="email-link">
-      Get In Touch
+      <Trans>Get In Touch</Trans>
     </a>
   );
 
@@ -137,3 +141,19 @@ const Hero = () => {
 };
 
 export default Hero;
+
+export const query = graphql`
+  query ($language: String!) {
+    locales: allLocale(
+      filter: { ns: { in: ["about", "contact", "featured", "hero", "jobs", "projects", "resume", "skills"] }, language: { eq: $language } }
+    ) {
+      edges {
+        node {
+          ns
+          data
+          language
+        }
+      }
+    }
+  }
+`;

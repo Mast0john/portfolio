@@ -1,3 +1,4 @@
+// i18next-extract-mark-ns-start jobs
 import React, { useState, useEffect, useRef } from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
 import { CSSTransition } from 'react-transition-group';
@@ -5,6 +6,7 @@ import styled from 'styled-components';
 import { srConfig } from '@config';
 import { KEY_CODES } from '@utils';
 import sr from '@utils/sr';
+import { Link, Trans, useTranslation } from 'gatsby-plugin-react-i18next';
 
 const StyledJobsSection = styled.section`
   max-width: 700px;
@@ -151,6 +153,8 @@ const StyledTabPanel = styled.div`
 `;
 
 const Jobs = () => {
+  const { t } = useTranslation();
+
   const data = useStaticQuery(graphql`
     query {
       jobs: allMarkdownRemark(
@@ -223,7 +227,7 @@ const Jobs = () => {
 
   return (
     <StyledJobsSection id="jobs" ref={revealContainer}>
-      <h2 className="numbered-heading">Where I’ve Worked</h2>
+      <h2 className="numbered-heading">{t("Where I’ve Worked")}</h2>
 
       <div className="inner">
         <StyledTabList role="tablist" aria-label="Job tabs" onKeyDown={e => onKeyDown(e)}>
@@ -264,16 +268,16 @@ const Jobs = () => {
                     aria-hidden={activeTabId !== i}
                     hidden={activeTabId !== i}>
                     <h3>
-                      <span>{title}</span>
+                      <span>{t(title)}</span>
                       <span className="company">
                         &nbsp;@&nbsp;
                         <a href={url} className="inline-link">
-                          {company}
+                          {t(company)}
                         </a>
                       </span>
                     </h3>
 
-                    <p className="range">{range}</p>
+                    <p className="range">{t(range)}</p>
 
                     <div dangerouslySetInnerHTML={{ __html: html }} />
                   </StyledTabPanel>

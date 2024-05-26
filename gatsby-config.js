@@ -1,4 +1,5 @@
 const config = require('./src/config');
+const { languages, defaultLanguage } = require('./languages');
 
 module.exports = {
   siteMetadata: {
@@ -153,6 +154,77 @@ module.exports = {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
         trackingId: 'UA-45666519-2',
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/locales`,
+        name: `locale`,
+      },
+    },
+    {
+      resolve: `gatsby-plugin-react-i18next`,
+      options: {
+        localeJsonSourceName: `locale`, // name given to `gatsby-source-filesystem` plugin.
+        languages: [`en`, 'fr'],
+        defaultLanguage: `en`,
+        // if you are using Helmet, you must include siteUrl, and make sure you add http:https
+        siteUrl: `https://example.com/`,
+        // you can pass any i18next options
+        i18nextOptions: {
+          fallbackLng: defaultLanguage,
+          supportedLngs: languages,
+          defaultNS: 'translation',
+          interpolation: {
+            escapeValue: false, // not needed for react as it escapes by default
+          },
+          keySeparator: false,
+          nsSeparator: false,
+        },
+        pages: [
+          {
+            matchPath: '/:lang?/blog/:uid',
+            getLanguageFromPath: true,
+            excludeLanguages: ['es'],
+          },
+          {
+            matchPath: '/locales',
+            languages: ['en'],
+          },
+        ],
+      },
+    },
+    {
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        // In your gatsby-transformer-remark plugin array
+        plugins: [
+          {
+            resolve: 'gatsby-remark-emojis',
+            options: {
+              // Deactivate the plugin globally (default: true)
+              active: true,
+              // Add a custom css class
+              class: 'emoji-icon',
+              // In order to avoid pattern mismatch you can specify
+              // an escape character which will be prepended to the
+              // actual pattern (e.g. `#:poop:`).
+              escapeCharacter: '#', // (default: '')
+              // Select the size (available size: 16, 24, 32, 64)
+              size: 64,
+              // Add custom styles
+              styles: {
+                display: 'inline',
+                margin: '0',
+                'margin-top': '1px',
+                position: 'relative',
+                top: '5px',
+                width: '25px',
+              },
+            },
+          },
+        ],
       },
     },
   ],
