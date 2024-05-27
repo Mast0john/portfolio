@@ -1,0 +1,26 @@
+name: Deploy DEV - Build and Deploy to Netlify every hour
+
+on:
+  schedule:
+    - cron: '0 */2 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    # https://github.com/actions/setup-node#usage
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - run: npm install
+    - run: npm run build
+    # Deploy the gatsby build to Netlify
+    - uses: netlify/actions/cli@master
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.bsTwitbygPWeOixL3zD0HtkB05wd2SjBFNugFiksScc }}
+        NETLIFY_SITE_ID: ${{ secrets.ddde60a2-f960-460d-bb07-a47ebe28949a }}
+      with:
+        args: deploy --dir=public --dev
+        secrets: '["NETLIFY_AUTH_TOKEN", "NETLIFY_SITE_ID"]'
