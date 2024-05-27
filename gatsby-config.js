@@ -2,6 +2,9 @@ const config = require('./src/config');
 const { languages, defaultLanguage } = require('./languages');
 
 module.exports = {
+  flags: {
+    DEV_SSR: true,
+  },
   siteMetadata: {
     title: 'Jonathan Heyman',
     description:
