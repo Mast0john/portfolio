@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Layout, Hero } from '@components';
-import { Link, Trans, useTranslation } from 'gatsby-plugin-react-i18next';
 import { graphql } from 'gatsby';
 
 const StyledMainContainer = styled.main`
@@ -10,10 +9,9 @@ const StyledMainContainer = styled.main`
 `;
 
 export default function IndexPage() {
-  const { t } = useTranslation();
 
   return (
-    <Layout location={location}>
+    <Layout location={ this.props.location }>
       <StyledMainContainer className="fillHeight">
         <Hero />
       </StyledMainContainer>
