@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { srConfig } from '@config';
 import sr from '@utils/sr';
 import { Icon } from '@components/icons';
+import { Trans, useTranslation } from 'gatsby-plugin-react-i18next';
 
 const StyledProjectsSection = styled.section`
   display: flex;
@@ -171,7 +172,7 @@ const Projects = () => {
           fileAbsolutePath: { regex: "/projects/" }
           frontmatter: { showInProjects: { ne: false } }
         }
-        sort: { fields: [frontmatter___date], order: DESC }
+        sort: { frontmatter: {date: DESC} }
       ) {
         edges {
           node {

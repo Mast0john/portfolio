@@ -152,7 +152,7 @@ const StyledLinks = styled.div`
 `;
 
 const Nav = ({ isHome }) => {
-  const { languages, changeLanguage } = useI18next();
+  const {languages, originalPath} = useI18next();
   const [isMounted, setIsMounted] = useState(!isHome);
   const scrollDirection = useScrollDirection('down');
   const [scrolledToTop, setScrolledToTop] = useState(true);
@@ -233,34 +233,6 @@ const Nav = ({ isHome }) => {
               ))}
             </TransitionGroup>
           </ol>
-          {/*<TransitionGroup component={null}>*/}
-          {/*  {isMounted && (*/}
-          {/*    <CSSTransition classNames={fadeDownClass} timeout={timeout}>*/}
-          {/*      <div style={{ transitionDelay: `${isHome ? navLinks.length * 100 : 0}ms` }}>*/}
-          {/*        <p className="resume-text">*/}
-          {/*          Resume&nbsp;*/}
-          {/*          <a*/}
-          {/*            className="resume-text-button"*/}
-          {/*            href="/%5BFR%5Dresume.pdf"*/}
-          {/*            target="_blank"*/}
-          {/*            rel="noopener noreferrer">*/}
-          {/*            FR*/}
-          {/*          </a>*/}
-          {/*          <label className="resume-pipe">*/}
-          {/*            |*/}
-          {/*          </label>*/}
-          {/*          <a*/}
-          {/*            className="resume-text-button"*/}
-          {/*            href="/%5BEN%5Dresume.pdf"*/}
-          {/*            target="_blank"*/}
-          {/*            rel="noopener noreferrer">*/}
-          {/*            EN*/}
-          {/*          </a>*/}
-          {/*        </p>*/}
-          {/*      </div>*/}
-          {/*    </CSSTransition>*/}
-          {/*  )}*/}
-          {/*</TransitionGroup>*/}
           <TransitionGroup component={null}>
             {isMounted && (
               <CSSTransition classNames={fadeDownClass} timeout={timeout}>
@@ -268,16 +240,11 @@ const Nav = ({ isHome }) => {
                   <p className="resume-text">
                     {languages.map(lng => (
                       <li key={lng}>
-                        <a
-                          className="resume-text-button"
-                          href="#"
-                          onClick={e => {
-                            e.preventDefault();
-                            changeLanguage(lng);
-                          }}
-                        >
+                        <Link 
+                              className="resume-text-button" 
+                              to={originalPath} language={lng}>
                           {lng}
-                        </a>
+                        </Link>
                         <label className="resume-pipe">
                           |
                         </label>

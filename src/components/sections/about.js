@@ -140,6 +140,7 @@ const About = () => {
 
   return (
     <StyledAboutSection id="about" ref={revealContainer}>
+      
       <div className="inner">
         <StyledText>
           <div>
@@ -153,23 +154,19 @@ const About = () => {
               </Trans>
             </p>
             <p>
-              <Trans>Shortly after graduating from{' '}
-                <a href="https://arras.cesi.fr/ecoles-formations/">Exia Cesi School</a>, I started as a Freelance and after I joined the
-              engineering team at <a href="https://www.afibel.com/fr/">Afibel</a> where I worked
+              <Trans>Shortly after graduating from{' '}</Trans> <a href="https://arras.cesi.fr/ecoles-formations/">{t("Exia Cesi School")}</a>
+              {t(", I started as a Freelance and after I joined the engineering team at")}<a href="https://www.afibel.com/fr/">Afibel</a> <Trans>where I worked
               on a wide variety of interesting and meaningful projects on a daily basis.
               </Trans>
             </p>
             <p>
-              Graduated with a master's degree in IS from <a href="https://enigma-school.com/">Enigma School</a>.
-              In particular, I worked on an end-of-study <a className="resume-text-button"
+            {t("Graduated with a master's degree in IS from")} <a href="https://enigma-school.com/">{t("Enigma School")}</a>. {t("In particular, I worked on an end-of-study")} <a className="resume-text-button"
                 href="/dissertation.pdf"
                 target="_blank"
-                rel="noopener noreferrer">thesis</a> concerning the development and management of an application in connected/disconnected mode to an ERP using WinDev.
+                rel="noopener noreferrer">{t("thesis")}</a> {t("concerning the development and management of an application in connected/disconnected mode to an ERP using WinDev.")}
             </p>
             <p>
-              <Trans>
-                Lately Web & ERP Developer - <a href="https://www.progiteam.fr/">Progiteam</a> - Divalto ERP Integrator.
-              </Trans>
+              {t("Lately Web & ERP Developer")} - <a href="https://www.progiteam.fr/">Progiteam</a> - {t("Divalto ERP Integrator.")}
             </p>
 
             <p><Trans>Here are a few technologies I've been working with recently:</Trans></p>

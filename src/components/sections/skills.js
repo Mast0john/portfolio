@@ -7,6 +7,7 @@ import { KEY_CODES } from '@utils';
 import sr from '@utils/sr';
 import Img from 'gatsby-image';
 import Masonry from 'react-masonry-css';
+import { Link, Trans, useTranslation } from 'gatsby-plugin-react-i18next';
 
 const StyledSkillsSection = styled.section`
   max-width: 1000px;
@@ -299,11 +300,13 @@ const StyledTabPanel = styled.div`
 
 
 const Skills = () => {
+  const { t } = useTranslation();
+
   const data = useStaticQuery(graphql`
     query {
       devSkills: allMarkdownRemark(
         filter: { fileAbsolutePath: { regex: "/skills/dev/" } }
-        sort: { fields: [frontmatter___date], order: DESC }
+        sort: { frontmatter: {date: DESC} }
       ) {
         edges {
           node {
@@ -407,7 +410,7 @@ const Skills = () => {
       }
       designSkills: allMarkdownRemark(
         filter: { fileAbsolutePath: { regex: "/skills/design/" } }
-        sort: { fields: [frontmatter___date], order: ASC }
+        sort: { frontmatter: {date: ASC} }
       ) {
         edges {
           node {
@@ -484,7 +487,7 @@ const Skills = () => {
       }
       languagesSkills: allMarkdownRemark(
         filter: { fileAbsolutePath: { regex: "/skills/languages/" } }
-        sort: { fields: [frontmatter___date], order: ASC }
+        sort: { frontmatter: {date: ASC} }
       ) {
         edges {
           node {
@@ -676,18 +679,18 @@ const Skills = () => {
 
   return (
     <StyledSkillsSection id="skills" ref={revealContainer}>
-      <h2 className="numbered-heading">Skills</h2>
+      <h2 className="numbered-heading">{t("Skills")}</h2>
 
       <div className="inner">
 
         <button className="more-button" onClick={() => setShowMoreDev(!showMoreDev)}>
-          {showMoreDev ? '-' : '+'} Development
+          {showMoreDev ? '-' : '+'} <Trans>Development</Trans>
         </button>
         <button className="more-button" onClick={() => setShowMoreDesign(!showMoreDesign)}>
-          {showMoreDesign ? '-' : '+'} Design
+          {showMoreDesign ? '-' : '+'} <Trans>Design</Trans>
         </button>
         <button className="more-button" onClick={() => setShowMoreLanguages(!showMoreLanguages)}>
-          {showMoreLanguages ? '-' : '+'} Languages
+          {showMoreLanguages ? '-' : '+'} <Trans>Languages</Trans>
         </button>
 
         <StyledTabList style={displayDev} role="tablist" aria-label="Skill tabs" onKeyDown={e => onKeyDown(e)}>
@@ -705,7 +708,7 @@ const Skills = () => {
                     tabIndex={activeTabId === i ? '0' : '-1'}
                     aria-selected={activeTabId === i ? true : false}
                     aria-controls={`panel-${i}`}>
-                    <span>{category}</span>
+                    <span><Trans>{category}</Trans></span>
                   </StyledTabButton>
                 );
               })}
@@ -719,7 +722,7 @@ const Skills = () => {
               txtlogo1, txtlogo2, txtlogo3, txtlogo4, txtlogo5, txtlogo6, txtlogo7, txtlogo8, txtlogo9, txtlogo10, txtlogo11,
               url1, url2, url3, url4, url5, url6, url7, url8, url9, url10, url11 } = frontmatter;
 
-            // Some exemples logos. If haven't logos of skills, nothing appeared
+            // Some logos of skills. If haven't logos of skills, nothing appeared
             const logoSkill1 = logo1 ? (
               <div className="skill-image">
                 <a href={url1 ? url1 : '#'}>
@@ -849,7 +852,7 @@ const Skills = () => {
                 tabIndex={activeTab2Id === j ? '0' : '-1'}
                 aria-selected={activeTab2Id === j ? true : false}
                 aria-controls={`panel-${j}`}>
-                <span>{category}</span>
+                <span><Trans>{category}</Trans></span>
               </StyledTabButton>
             );
           })}
@@ -960,7 +963,7 @@ const Skills = () => {
                   tabIndex={activeTab3Id === k ? '0' : '-1'}
                   aria-selected={activeTab3Id === k ? true : false}
                   aria-controls={`panel-${k}`}>
-                  <span>{category}</span>
+                  <span><Trans>{category}</Trans></span>
                 </StyledTabButton>
               );
             })}

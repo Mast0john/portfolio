@@ -11,7 +11,7 @@ const StyledMainContainer = styled.main`
 export default function IndexPage() {
 
   return (
-    <Layout location={ this.props.location }>
+    <Layout location={location}>
       <StyledMainContainer className="fillHeight">
         <Hero />
       </StyledMainContainer>
@@ -23,9 +23,11 @@ IndexPage.propTypes = {
   location: PropTypes.object.isRequired,
 };
 
-export const query = graphql`
-  query($language: String!) {
-    locales: allLocale(filter: {language: {eq: $language}}) {
+export const query = (graphql`
+  query ($language: String!) {
+    locales: allLocale(
+      filter: { ns: { in: ["404","about", "contact", "translation", "jobs", "work", "resume", "skills"] },
+language: { eq: $language } }) {
       edges {
         node {
           ns
@@ -35,4 +37,4 @@ export const query = graphql`
       }
     }
   }
-`;
+`);

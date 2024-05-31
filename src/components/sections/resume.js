@@ -4,6 +4,7 @@ import Img from 'gatsby-image';
 import styled from 'styled-components';
 import { srConfig } from '@config';
 import sr from '@utils/sr';
+import { Link, Trans, useTranslation } from 'gatsby-plugin-react-i18next';
 
 const StyledAboutSection = styled.section`
   max-width: 900px;

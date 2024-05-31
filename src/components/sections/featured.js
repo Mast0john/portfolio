@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
 import Img from 'gatsby-image';
 import styled from 'styled-components';
@@ -284,7 +284,7 @@ const Featured = () => {
     query {
       featured: allMarkdownRemark(
         filter: { fileAbsolutePath: { regex: "/featured/" } }
-        sort: { fields: [frontmatter___date], order: DESC }
+        sort: { frontmatter: {date: DESC} }
       ) {
         edges {
           node {
@@ -300,6 +300,7 @@ const Featured = () => {
               tech
               github
               external
+              descr
             }
             html
           }
@@ -320,14 +321,14 @@ const Featured = () => {
   return (
     <section id="projects">
       <h2 className="numbered-heading" ref={revealTitle}>
-        Some Things I’ve Built
+        <Trans>Some Things I’ve Built</Trans>
       </h2>
 
       <StyledProjectsGrid>
         {featuredProjects &&
           featuredProjects.map(({ node }, i) => {
             const { frontmatter, html } = node;
-            const { external, title, tech, github, cover } = frontmatter;
+            const { external, title, tech, github, cover, descr } = frontmatter;
 
             return (
               <StyledProject key={i} ref={el => (revealProjects.current[i] = el)}>
@@ -336,13 +337,16 @@ const Featured = () => {
                     <p className="project-overline">{t("Featured Project")}</p>
 
                     <h3 className="project-title">
-                      <a href={external}>{title}</a>
+                      <a href={external}><Trans>{title}</Trans></a>
                     </h3>
 
-                    <div
+                    {/* <div
                       className="project-description"
                       dangerouslySetInnerHTML={{ __html: html }}
-                    />
+                    /> */}
+
+                    <div className="project-description"><Trans>{descr}</Trans></div>
+
 
                     {tech.length && (
                       <ul className="project-tech-list">

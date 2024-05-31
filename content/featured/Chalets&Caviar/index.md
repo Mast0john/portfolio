@@ -11,6 +11,7 @@ tech:
   - Elementor
   - FacetWP
 showInProjects: true
+descr: 'A WordPress site built with Hestia Theme and several plugins. The main template provides a clear and uncluttered result, reflecting the luxury line of the agency.'
 ---
 
 A WordPress site built with Hestia Theme and several plugins. The main template provides a clear and uncluttered result, reflecting the luxury line of the agency.

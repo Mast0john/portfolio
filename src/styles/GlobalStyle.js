@@ -562,7 +562,7 @@ const GlobalStyle = createGlobalStyle`
 
   ${PrismStyles};
 
-  ${DarkLightStyle};
+  ${DarkLightStyle}
 
 `;
 

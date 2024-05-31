@@ -11,6 +11,7 @@ tech:
   - JS
   - Figma
 showInProjects: true
+descr: 'A website prototype built with Material Design framework for reserving tickets movies. The site relies on a one-page device, built around call-to-action blocks and modals windows system.'
 ---
 
 A website prototype built with Material Design framework for reserving tickets movies. The site relies on a one-page device, built around call-to-action blocks and modals windows system.

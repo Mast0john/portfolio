@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Icon } from '@components/icons';
 import { socialMedia } from '@config';
+import { Link, Trans, useTranslation } from 'gatsby-plugin-react-i18next';
+import { graphql } from 'gatsby';
 
 const StyledFooter = styled.footer`
   ${({ theme }) => theme.mixins.flexCenter};
@@ -68,6 +70,8 @@ const StyledCredit = styled.div`
 `;
 
 const Footer = () => {
+  const { t } = useTranslation();
+
   const [githubInfo, setGitHubInfo] = useState({
     stars: null,
     forks: null,
@@ -106,7 +110,7 @@ const Footer = () => {
 
       <StyledCredit tabindex="-1">
         <a href="https://github.com/">
-          <div>Designed &amp; Built by Jonathan Heyman</div>
+          <div><Trans>Designed &amp; Built by Jonathan Heyman</Trans></div>
 
           {githubInfo.stars && githubInfo.forks && (
             <div className="github-stats">

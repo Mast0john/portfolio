@@ -2,9 +2,6 @@ const config = require('./src/config');
 const { languages, defaultLanguage } = require('./languages');
 
 module.exports = {
-  flags: {
-    DEV_SSR: true,
-  },
   siteMetadata: {
     title: 'Jonathan Heyman',
     description:
@@ -173,7 +170,7 @@ module.exports = {
         languages: [`en`, 'fr'],
         defaultLanguage: `en`,
         // if you are using Helmet, you must include siteUrl, and make sure you add http:https
-        siteUrl: `https://example.com/`,
+        siteUrl: `https://heymanjonathan.netlify.app/`,
         // you can pass any i18next options
         i18nextOptions: {
           fallbackLng: defaultLanguage,
@@ -194,6 +191,10 @@ module.exports = {
           {
             matchPath: '/locales',
             languages: ['en'],
+          },
+          {
+            matchPath: '/locales',
+            languages: ['fr'],
           },
         ],
       },

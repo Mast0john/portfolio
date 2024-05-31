@@ -1,6 +1,6 @@
 ---
 date: '7'
-category: 'Languages'
+category: 'Programming <br> language'
 
 logo1: './logos/html5.png'
 txtlogo1: 'HTML5'

@@ -1,6 +1,18 @@
 {
+  "About":"À propos",
   "About Me": "À propos de moi",
   "Software engineer based in Lille, FR.": "Ingénieur logiciel basé à Lille, FR.",
-  "J'aime créer des choses qui vivent sur Internet, qu'il s'agisse de sites Web, d'applications ou de tout ce qui se trouve entre les deux. Mon objectif est de toujours créer des produits qui offrent des expériences performantes et au pixel près.": "J'aime créer des choses qui vivent sur Internet, qu'il s'agisse de sites Web, d'applications ou de tout ce qui se trouve entre les deux. Mon objectif est de toujours créer des produits qui offrent des expériences performantes et au pixel près.",
-  "Shortly after graduating from": "Peu de temps après avoir obtenu le diplôme"
+  "I enjoy creating things that live on the internet, whether that be websites, applications, or anything in between. My goal is to always build products that provide pixel-perfect, performant experiences.": "J'aime créer des choses qui vivent sur Internet, qu'il s'agisse de sites Web, d'applications ou de tout ce qui se trouve entre les deux. Mon objectif est de toujours créer des produits qui offrent des expériences performantes et au pixel près.",
+  "Shortly after graduating from ": "Peu de temps après avoir obtenu le diplôme de",
+  "Exia Cesi School":"l'École Exia Cesi",
+  ", I started as a Freelance and after I joined the engineering team at":", j'ai commencé comme freelance et j'ai ensuite rejoint l'équipe d'ingénierie d'",
+  "where I worked on a wide variety of interesting and meaningful projects on a daily basis.":"où j'ai travaillé quotidiennement sur une grande variété de projets intéressants et significatifs.",
+  "Graduated with a master's degree in IS from":"Diplômé d'un master en SI de",
+  "Enigma School":"l'École Enigma",
+  "In particular, I worked on an end-of-study":"J'ai notamment travaillé sur un stage de fin d'études",
+  "thesis":"mémoire",
+  "concerning the development and management of an application in connected/disconnected mode to an ERP using WinDev.":"concernant le développement et la gestion d'une application en mode connecté/déconnecté à un ERP sous WinDev.",
+  "Lately Web & ERP Developer":"Dernièrement Développeur Web & ERP",
+  "Divalto ERP Integrator.":"Intégrateur ERP Divalto.",
+  "Here are a few technologies I've been working with recently:":"Voici quelques technologies avec lesquelles j'ai travaillé récemment :"
 }

@@ -4,7 +4,8 @@ import styled from 'styled-components';
 import { email } from '@config';
 import { navDelay, loaderDelay } from '@utils';
 import { Link, Trans, useTranslation } from 'gatsby-plugin-react-i18next';
-import { graphql } from 'gatsby';
+import { useStaticQuery, graphql } from 'gatsby';
+
 
 const StyledHeroSection = styled.section`
   ${({ theme }) => theme.mixins.flexCenter};
@@ -141,19 +142,3 @@ const Hero = () => {
 };
 
 export default Hero;
-
-export const query = graphql`
-  query ($language: String!) {
-    locales: allLocale(
-      filter: { ns: { in: ["about", "contact", "featured", "hero", "jobs", "projects", "resume", "skills"] }, language: { eq: $language } }
-    ) {
-      edges {
-        node {
-          ns
-          data
-          language
-        }
-      }
-    }
-  }
-`;

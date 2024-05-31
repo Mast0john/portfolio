@@ -9,6 +9,7 @@ tech:
   - SCSS
   - JS
 showInProjects: true
+descr: 'First iteration of my personal website built with Gatsby and hosted on Netlify.'
 ---
 
-First iteration of my personal website built with Gatsby and hosted on GitHub Pages.
+First iteration of my personal website built with Gatsby and hosted on Netlify.

@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { srConfig, email } from '@config';
 import sr from '@utils/sr';
+import { Link, Trans, useTranslation } from 'gatsby-plugin-react-i18next';
 
 const StyledContactSection = styled.section`
   max-width: 600px;
@@ -46,17 +47,17 @@ const Contact = () => {
 
   return (
     <StyledContactSection id="contact" ref={revealContainer}>
-      <h2 className="numbered-heading overline">What’s Next?</h2>
+      <h2 className="numbered-heading overline"><Trans>What’s Next?</Trans></h2>
 
-      <h2 className="title">Get In Touch</h2>
+      <h2 className="title"><Trans>Get In Touch</Trans></h2>
 
-      <p>
+      <p><Trans>
         Although I'm not currently looking for any new opportunities, my inbox is always open.
         Whether you have a question or just want to say hi, I'll try my best to get back to you!
-      </p>
+        </Trans></p>
 
       <a className="email-link" href={`mailto:${email}`}>
-        Say Hello
+      <Trans>Say Hello</Trans>
       </a>
     </StyledContactSection>
   );
