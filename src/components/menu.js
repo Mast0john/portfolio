@@ -269,27 +269,6 @@ const Menu = () => {
                 ))}
               </ol>
             )}
-
-            <p className="resume-text">
-              Resume&nbsp;
-              <a
-                className="resume-text-button"
-                href="/%5BFR%5Dresume.pdf"
-                target="_blank"
-                rel="noopener noreferrer">
-                FR
-              </a>
-              <label className="resume-pipe">
-                |
-              </label>
-              <a
-                className="resume-text-button"
-                href="/%5BEN%5Dresume.pdf"
-                target="_blank"
-                rel="noopener noreferrer">
-                EN
-              </a>
-            </p>
             <p>
               <ThemeToggler>
                 {({ theme, toggleTheme }) => (

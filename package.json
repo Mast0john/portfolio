@@ -18,7 +18,7 @@
     "start": "--openssl-legacy-provider npm run develop",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "extract": "yarn run babel --config-file babel-extract.config.js -o tmp/chunk.js 'src/**/*.{js,jsx,ts,tsx}' && rm -rf tmp"
+    "extract": "babel --config-file ./babel-extract.config.js -o tmp/chunk.js 'src/**/*.{js,jsx,ts,tsx}' && rm -rf tmp"
   },
   "husky": {
     "hooks": {
@@ -76,6 +76,8 @@
     "scrollreveal": "^4.0.5",
     "smooth-scroll": "^16.1.0",
     "styled-components": "^6.1.11",
+    "tsparticles-engine": "^2.12.0",
+    "tsparticles-slim": "^2.12.0",
     "use-sound": "^2.0.1"
   },
   "devDependencies": {
@@ -95,6 +97,7 @@
     "lint-staged": "^10.1.2",
     "prettier": "^1.19.1",
     "react-dark-mode-toggle": "^0.2.0",
+    "tsparticles": "^3.4.0",
     "webpack-cli": "^5.1.4"
   }
 }

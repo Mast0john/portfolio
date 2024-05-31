@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled, { ThemeProvider } from 'styled-components';
 import { Head, Loader, Nav, Social, Email, Footer } from '@components';
 import { GlobalStyle, theme } from '@styles';
-import StyledParticles from '../styles/particles';
+import Particle from '../styles/particles';
+import StyledParticles from 'react-tsparticles';
 import DarkLightSwitch from './icons/DarkLightSwitch';
+
+import Particles from "react-tsparticles";
+import { loadFull } from "tsparticles";
+import { loadSlim } from "tsparticles-slim";
+import ParticlesOptions from '../styles/ParticlesOptions';
+
 
 // https://medium.com/@chrisfitkin/how-to-smooth-scroll-links-in-gatsby-3dc445299558
 if (typeof window !== 'undefined') {
@@ -48,6 +55,20 @@ const StyledContent = styled.div`
 `;
 
 const Layout = ({ children, location }) => {
+  const particlesInit = async (tsparticles) => {
+    console.log(tsparticles);
+
+    // you can initialize the tsParticles instance (main) here, adding custom shapes or presets
+    // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
+    // starting from v2 you can add only the features you need reducing the bundle size
+    //await loadFull(tsparticles);
+    await loadSlim(tsparticles);
+  };
+
+  const particlesLoaded = (container) => {
+    console.log(container);
+  };
+
   const isHome = location.pathname === '/';
   const [isLoading, setIsLoading] = useState(isHome);
 
@@ -86,11 +107,11 @@ const Layout = ({ children, location }) => {
   return (
 
     <>
-      <Head />
+      <Head/>
       <div id="root">
-        <StyledParticles/>
+      <Particle/>
         <ThemeProvider theme={theme}>
-          <GlobalStyle />
+          <GlobalStyle/>
           <SkipToContentLink href="#content">Skip to Content</SkipToContentLink>
 
           {isLoading && isHome ? (
