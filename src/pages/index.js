@@ -8,26 +8,28 @@ const StyledMainContainer = styled.main`
   counter-reset: section;
 `;
 
-export default function IndexPage() {
-
-  return (
-    <Layout location={location}>
-      <StyledMainContainer className="fillHeight">
-        <Hero />
-      </StyledMainContainer>
-    </Layout>
-  );
-}
+const IndexPage = ({ location }) => (
+  <Layout location={location}>
+    <StyledMainContainer className="fillHeight">
+      <Hero />
+    </StyledMainContainer>
+  </Layout>
+);
 
 IndexPage.propTypes = {
   location: PropTypes.object.isRequired,
 };
 
-export const query = (graphql`
-  query ($language: String!) {
+export default IndexPage;
+
+export const query = graphql`
+  query($language: String!) {
     locales: allLocale(
-      filter: { ns: { in: ["404","about", "contact", "translation", "jobs", "work", "resume", "skills"] },
-language: { eq: $language } }) {
+      filter: {
+        ns: { in: ["404", "about", "contact", "translation", "jobs", "work", "resume", "skills"] }
+        language: { eq: $language }
+      }
+    ) {
       edges {
         node {
           ns
@@ -37,4 +39,4 @@ language: { eq: $language } }) {
       }
     }
   }
-`);
+`;
