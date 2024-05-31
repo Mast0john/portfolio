@@ -302,7 +302,6 @@ const Featured = () => {
               external
               descr
             }
-            html
           }
         }
       }
@@ -327,7 +326,7 @@ const Featured = () => {
       <StyledProjectsGrid>
         {featuredProjects &&
           featuredProjects.map(({ node }, i) => {
-            const { frontmatter, html } = node;
+            const { frontmatter } = node;
             const { external, title, tech, github, cover, descr } = frontmatter;
 
             return (
