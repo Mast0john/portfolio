@@ -2,8 +2,8 @@
 date: '2'
 title: 'BFF Prototype Website'
 cover: './boston-film-festival.png'
-github: 'https://github.com/'
-external: 'https://github.com/'
+github: 'https://github.com/Mast0john/OC-BOFF'
+external: 'https://boston-outdoor-film-festival.netlify.app/'
 tech:
   - Material Design
   - Html5
