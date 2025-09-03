@@ -1,9 +1,15 @@
 {
-    "Some Things I’ve Built":"Quelques projets",
-    "Featured Project":"Projet en avant",
-    "First iteration of my personal website built with Gatsby and hosted on Netlify.":"Première itération de mon site Web personnel construit avec Gatsby et hébergé sur Netlify.",
-    "BFF Prototype Website":"Prototype du site web du BFF",
-    "A website prototype built with Material Design framework for reserving tickets movies. The site relies on a one-page device, built around call-to-action blocks and modals windows system.":"Un prototype de site Web construit avec le framework Material Design pour réserver des billets de cinéma. Le site s'appuie sur un dispositif d'une page, construit autour de blocs d'appel à l'action et d'un système de fenêtres modales.",
-    "Chalets & Caviar Website":"Site web Chalets & Caviar",
-    "A WordPress site built with Hestia Theme and several plugins. The main template provides a clear and uncluttered result, reflecting the luxury line of the agency.":"Un site WordPress construit avec Hestia Theme et plusieurs plugins. Le template principal offre un résultat clair et épuré, à l’image de la ligne luxe de l’agence."
+  "Some Things I’ve Built": "Quelques projets",
+  "Featured Project": "Projet en avant",
+  "First iteration of my personal website built with Gatsby and hosted on Netlify.": "Première itération de mon site Web personnel construit avec Gatsby et hébergé sur Netlify.",
+  "BFF Prototype Website": "Prototype du site web du BFF",
+  "A website prototype built with Material Design framework for reserving tickets movies. The site relies on a one-page device, built around call-to-action blocks and modals windows system.": "Un prototype de site Web construit avec le framework Material Design pour réserver des billets de cinéma. Le site s'appuie sur un dispositif d'une page, construit autour de blocs d'appel à l'action et d'un système de fenêtres modales.",
+  "Chalets & Caviar Website": "Site web Chalets & Caviar",
+  "A WordPress site built with Hestia Theme and several plugins. The main template provides a clear and uncluttered result, reflecting the luxury line of the agency.": "Un site WordPress construit avec Hestia Theme et plusieurs plugins. Le template principal offre un résultat clair et épuré, à l’image de la ligne luxe de l’agence.",
+  "Second iteration of my personal website built with Gatsby and hosted on Netlify.": "Seconde itération de mon site Web personnel construit avec Gatsby et hébergé sur Netlify.",
+  "Other Noteworthy Projects": "Autres projets remarquables",
+  "view the archive": "voir l'archive",
+  "Show More": "Voir Plus",
+  "React Recipe App": "Application React de recettes",
+  "This app allows you to discover a wide range of delicious recipes.": "Cette application vous permet de découvrir un large éventail de recettes délicieuses."
 }
