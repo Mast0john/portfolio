@@ -219,6 +219,7 @@ const Nav = ({ isHome }) => {
                     toggleTheme(switchLight);
                   }}
                 />
+                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
                 <label htmlFor={'toggle'}></label>
               </div>
             )}

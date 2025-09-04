@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { Link, useI18next } from 'gatsby-plugin-react-i18next'; // ✅ Import correct pour la gestion i18n
 import styled from 'styled-components';
@@ -20,6 +21,7 @@ const StyledMenu = styled.div`
   }
 `;
 
+/* eslint-disable indent */
 const StyledHamburgerButton = styled.button`
   display: none;
 
@@ -90,6 +92,7 @@ const StyledHamburgerButton = styled.button`
     }
   }
 `;
+/* eslint-enable indent */
 
 const StyledSidebar = styled.aside`
   display: none;
@@ -339,6 +342,7 @@ const Menu = ({ isHome }) => {
                         toggleTheme(switchLight);
                       }}
                     />
+                    {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
                     <label htmlFor={'toggle'}></label>
                   </div>
                 )}
@@ -349,6 +353,10 @@ const Menu = ({ isHome }) => {
       </div>
     </StyledMenu>
   );
+};
+
+Menu.propTypes = {
+  isHome: PropTypes.bool,
 };
 
 export default Menu;
