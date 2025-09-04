@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet';
-import { Link } from 'gatsby';
+import { Link, useI18next } from 'gatsby-plugin-react-i18next'; // ✅ Import correct pour la gestion i18n
 import styled from 'styled-components';
 import { navLinks } from '@config';
-import { KEY_CODES } from '@utils';
+import { KEY_CODES, loaderDelay } from '@utils';
 import { useOnClickOutside } from '@hooks';
 import { ThemeToggler } from 'gatsby-plugin-dark-mode';
 import useSound from 'use-sound';
 import popUpOn from '../sounds/switch-on.mp3';
 import popUpOff from '../sounds/switch-off.mp3';
+import { Icon } from '@components/icons';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 const StyledMenu = styled.div`
   display: none;
@@ -78,7 +80,7 @@ const StyledHamburgerButton = styled.button`
       top: ${props => (props.menuOpen ? `0` : `-10px`)};
       opacity: ${props => (props.menuOpen ? 0 : 1)};
       transition: ${({ menuOpen }) =>
-    menuOpen ? 'var(--ham-before-active)' : 'var(--ham-before)'};
+        menuOpen ? 'var(--ham-before-active)' : 'var(--ham-before)'};
     }
     &:after {
       width: ${props => (props.menuOpen ? `100%` : `80%`)};
@@ -157,9 +159,30 @@ const StyledSidebar = styled.aside`
     margin: 10% auto 0;
     width: max-content;
   }
+
+  .resume-text {
+    ${({ theme }) => theme.mixins.customCtaButtonText};
+    margin-left: 15px;
+    margin-right: 15px;
+    font-size: var(--fz-xs);
+  }
+
+  .resume-text-button {
+    ${({ theme }) => theme.mixins.textButton};
+    font-size: var(--fz-xs);
+    margin-right: 10px;
+  }
+
+  .resume-text {
+    ${({ theme }) => theme.mixins.flexBetween};
+    margin-left: 15px;
+    font-size: var(--fz-xs);
+  }
 `;
 
-const Menu = () => {
+const Menu = ({ isHome }) => {
+  const [isMounted, setIsMounted] = useState(!isHome);
+  const { languages, originalPath } = useI18next();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
@@ -234,14 +257,22 @@ const Menu = () => {
 
     setFocusables();
 
+    const timeout = setTimeout(() => {
+      setIsMounted(true);
+    }, 100);
+
     return () => {
       document.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('resize', onResize);
+      clearTimeout(timeout);
     };
   }, []);
 
   const wrapperRef = useRef();
   useOnClickOutside(wrapperRef, () => setMenuOpen(false));
+
+  const fadeDownClass = isHome ? 'fadedown' : '';
+  const timeout = isHome ? loaderDelay : 0;
 
   return (
     <StyledMenu>
@@ -270,20 +301,45 @@ const Menu = () => {
               </ol>
             )}
             <p>
+              <TransitionGroup component={null}>
+                {isMounted && (
+                  <CSSTransition classNames={fadeDownClass} timeout={timeout}>
+                    <div style={{ transitionDelay: `${isHome ? navLinks.length * 100 : 0}ms` }}>
+                      <p className="resume-text">
+                        {languages.map(lng => (
+                          <Link
+                            key={lng}
+                            to={originalPath}
+                            language={lng}
+                            className="resume-text-button"
+                            onClick={() => setMenuOpen(false)}>
+                            <Icon name={lng === 'fr' ? 'fr' : 'en'} />
+                          </Link>
+                        ))}
+                        {/*rel="noopener noreferrer"*/}
+                      </p>
+                    </div>
+                  </CSSTransition>
+                )}
+              </TransitionGroup>
+            </p>
+            <p>
               <ThemeToggler>
                 {({ theme, toggleTheme }) => (
                   <div className={'dark-button'}>
-                    <input type={'checkbox'}
+                    <input
+                      type={'checkbox'}
                       id={'toggle'}
-                      onChange={e => toggleTheme(e.target.checked ? 'dark' : 'light') && setIsChecked(isChecked)}
+                      onChange={e =>
+                        toggleTheme(e.target.checked ? 'dark' : 'light') && setIsChecked(isChecked)
+                      }
                       checked={theme === 'dark'}
                       onClick={() => {
                         const switchLight = theme === 'dark' ? switchOn() : switchOff();
                         toggleTheme(switchLight);
                       }}
                     />
-                    <label htmlFor={'toggle'}>
-                    </label>
+                    <label htmlFor={'toggle'}></label>
                   </div>
                 )}
               </ThemeToggler>

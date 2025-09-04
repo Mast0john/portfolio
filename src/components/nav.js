@@ -6,7 +6,7 @@ import { navLinks } from '@config';
 import { loaderDelay } from '@utils';
 import { useScrollDirection } from '@hooks';
 import { Menu } from '@components';
-import { IconLogo } from '@components/icons';
+import { IconLogo, Icon } from '@components/icons';
 import { ThemeToggler } from 'gatsby-plugin-dark-mode';
 import useSound from 'use-sound';
 import popUpOn from '../sounds/switch-on.mp3';
@@ -30,8 +30,8 @@ const StyledHeader = styled.header`
 
   ${props =>
     props.scrollDirection === 'up' &&
-  !props.scrolledToTop &&
-  css`
+    !props.scrolledToTop &&
+    css`
       height: var(--nav-scroll-height);
       transform: translateY(0px);
       background-color: rgba(10, 25, 47, 0.85);
@@ -40,8 +40,8 @@ const StyledHeader = styled.header`
 
   ${props =>
     props.scrollDirection === 'down' &&
-  !props.scrolledToTop &&
-  css`
+    !props.scrolledToTop &&
+    css`
       height: var(--nav-scroll-height);
       transform: translateY(calc(var(--nav-scroll-height) * -1));
       box-shadow: 0 10px 30px -10px var(--navy-shadow);
@@ -88,7 +88,7 @@ const StyledNav = styled.nav`
   }
 
   li {
-      list-style-type: none
+    list-style-type: none;
   }
 `;
 
@@ -136,6 +136,7 @@ const StyledLinks = styled.div`
   .resume-text-button {
     ${({ theme }) => theme.mixins.textButton};
     font-size: var(--fz-xs);
+    margin-right: 10px;
   }
 
   .resume-text {
@@ -152,7 +153,7 @@ const StyledLinks = styled.div`
 `;
 
 const Nav = ({ isHome }) => {
-  const {languages, originalPath} = useI18next();
+  const { languages, originalPath } = useI18next();
   const [isMounted, setIsMounted] = useState(!isHome);
   const scrollDirection = useScrollDirection('down');
   const [scrolledToTop, setScrolledToTop] = useState(true);
@@ -206,31 +207,33 @@ const Nav = ({ isHome }) => {
           <ThemeToggler>
             {({ theme, toggleTheme }) => (
               <div className={'dark-button'}>
-                <input type={'checkbox'}
+                <input
+                  type={'checkbox'}
                   id={'toggle'}
-                  onChange={e => toggleTheme(e.target.checked ? 'dark' : 'light') && setIsChecked(isChecked)}
+                  onChange={e =>
+                    toggleTheme(e.target.checked ? 'dark' : 'light') && setIsChecked(isChecked)
+                  }
                   checked={theme === 'dark'}
                   onClick={() => {
                     const switchLight = theme === 'dark' ? switchOn() : switchOff();
                     toggleTheme(switchLight);
                   }}
                 />
-                <label htmlFor={'toggle'}>
-                </label>
+                <label htmlFor={'toggle'}></label>
               </div>
             )}
           </ThemeToggler>
           <ol>
             <TransitionGroup component={null}>
               {isMounted &&
-              navLinks &&
-              navLinks.map(({ url, name }, i) => (
-                <CSSTransition key={i} classNames={fadeDownClass} timeout={timeout}>
-                  <li key={i} style={{ transitionDelay: `${isHome ? i * 100 : 0}ms` }}>
-                    <Link to={url}>{name}</Link>
-                  </li>
-                </CSSTransition>
-              ))}
+                navLinks &&
+                navLinks.map(({ url, name }, i) => (
+                  <CSSTransition key={i} classNames={fadeDownClass} timeout={timeout}>
+                    <li key={i} style={{ transitionDelay: `${isHome ? i * 100 : 0}ms` }}>
+                      <Link to={url}>{name}</Link>
+                    </li>
+                  </CSSTransition>
+                ))}
             </TransitionGroup>
           </ol>
           <TransitionGroup component={null}>
@@ -240,14 +243,9 @@ const Nav = ({ isHome }) => {
                   <p className="resume-text">
                     {languages.map(lng => (
                       <li key={lng}>
-                        <Link 
-                              className="resume-text-button" 
-                              to={originalPath} language={lng}>
-                          {lng}
+                        <Link className="resume-text-button" to={originalPath} language={lng}>
+                          <Icon name={lng === 'fr' ? 'fr' : 'en'} />
                         </Link>
-                        <label className="resume-pipe">
-                          |
-                        </label>
                       </li>
                     ))}
                     {/*rel="noopener noreferrer"*/}
