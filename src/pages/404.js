@@ -1,13 +1,12 @@
 // i18next-extract-mark-ns-start 404
 import React, { useState, useEffect } from 'react';
-import { Link } from 'gatsby';
+import { Link, graphql } from 'gatsby';
 import { Helmet } from 'react-helmet';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { navDelay } from '@utils';
 import { Layout } from '@components';
-import { graphql } from 'gatsby';
 
 const StyledMainContainer = styled.main`
   ${({ theme }) => theme.mixins.flexCenter};
@@ -61,11 +60,14 @@ NotFoundPage.propTypes = {
 
 export default NotFoundPage;
 
-export const query = (graphql`
-  query ($language: String!) {
+export const query = graphql`
+  query($language: String!) {
     locales: allLocale(
-      filter: { ns: { in: ["404","about", "contact", "translation", "jobs", "work", "resume", "skills"] },
-language: { eq: $language } }) {
+      filter: {
+        ns: { in: ["404", "about", "contact", "translation", "jobs", "work", "resume", "skills"] }
+        language: { eq: $language }
+      }
+    ) {
       edges {
         node {
           ns
@@ -75,4 +77,4 @@ language: { eq: $language } }) {
       }
     }
   }
-`);
+`;
