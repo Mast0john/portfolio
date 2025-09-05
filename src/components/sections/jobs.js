@@ -178,6 +178,44 @@ const Jobs = () => {
 
   const jobsData = data.jobs.edges;
 
+  const [translatedHtmls, setTranslatedHtmls] = useState([]);
+
+  const translateHtmlContent = (htmlString, t) => {
+    if (typeof window === 'undefined') {
+      return htmlString; // Retourne le HTML brut côté serveur
+    }
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, 'text/html');
+
+    // Fonction récursive pour traduire le texte dans les nœuds
+    const translateNode = node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        // Traduire uniquement si le nœud contient du texte non vide
+        const text = node.textContent.trim();
+        if (text) {
+          node.textContent = t(text);
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        // Parcourir les enfants de l'élément
+        Array.from(node.childNodes).forEach(translateNode);
+      }
+    };
+
+    // Appliquer la traduction à tous les nœuds du document
+    Array.from(doc.body.childNodes).forEach(translateNode);
+
+    // Retourner le HTML traduit
+    return doc.body.innerHTML;
+  };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const newTranslatedHtmls = jobsData.map(({ node }) => translateHtmlContent(node.html, t));
+      setTranslatedHtmls(newTranslatedHtmls);
+    }
+  }, [t, jobsData]);
+
   const [activeTabId, setActiveTabId] = useState(0);
   const [tabFocus, setTabFocus] = useState(null);
   const tabs = useRef([]);
@@ -275,10 +313,8 @@ const Jobs = () => {
                         </a>
                       </span>
                     </h3>
-
                     <p className="range">{t(range)}</p>
-
-                    <div dangerouslySetInnerHTML={{ __html: html }} />
+                    <div dangerouslySetInnerHTML={{ __html: translatedHtmls[i] || html }} />{' '}
                   </StyledTabPanel>
                 </CSSTransition>
               );
