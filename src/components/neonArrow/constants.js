@@ -1,34 +1,34 @@
 // ─── Rectangle geometry ───────────────────────────────────────────────────────
+export const R = { x: 0, y: 0, w: 0, h: 0 };
 
+// ─── Calcul de la pointe de flèche ────────────────────────────────────────────
+function mkHead(cx2, cy2, ex, ey, L = 16) {
+  const dx = ex - cx2;
+  const dy = ey - cy2;
+  const len = Math.sqrt(dx * dx + dy * dy);
+  const tx = dx / len;
+  const ty = dy / len;
+  const bx = -tx;
+  const by = -ty;
+  const c = Math.SQRT1_2;
+
+  const a1x = c * (bx - by);
+  const a1y = c * (bx + by);
+  const a2x = c * (bx + by);
+  const a2y = c * (-bx + by);
+
+  const r = Math.round;
+  return [
+    `M ${r(ex + L * a1x)},${r(ey + L * a1y)}`,
+    `L ${ex},${ey}`,
+    `L ${r(ex + L * a2x)},${r(ey + L * a2y)}`,
+  ].join(' ');
+}
 // Fonction pour générer les flèches en fonction des dimensions
 export const getArrows = (width, height) => {
   const R = { x: 0, y: 0, w: width, h: height };
   const centerX = R.w / 2;
   //const centerY = R.h / 2;
-
-  // ─── Calcul de la pointe de flèche ────────────────────────────────────────────
-  function mkHead(cx2, cy2, ex, ey, L = 16) {
-    const dx = ex - cx2;
-    const dy = ey - cy2;
-    const len = Math.sqrt(dx * dx + dy * dy);
-    const tx = dx / len;
-    const ty = dy / len;
-    const bx = -tx;
-    const by = -ty;
-    const c = Math.SQRT1_2;
-
-    const a1x = c * (bx - by);
-    const a1y = c * (bx + by);
-    const a2x = c * (bx + by);
-    const a2y = c * (-bx + by);
-
-    const r = Math.round;
-    return [
-      `M ${r(ex + L * a1x)},${r(ey + L * a1y)}`,
-      `L ${ex},${ey}`,
-      `L ${r(ex + L * a2x)},${r(ey + L * a2y)}`,
-    ].join(' ');
-  }
 
   // ─── Arrows (recalculées dynamiquement en fonction de la largeur et la hauteur du rect) ──────────────────────────────
   // Flèches de gauche (dynamiques)
@@ -113,3 +113,6 @@ export const getArrows = (width, height) => {
 
   return { LEFT_ARROWS, RIGHT_ARROWS };
 };
+
+export const LEFT_ARROWS = [];
+export const RIGHT_ARROWS = [];
