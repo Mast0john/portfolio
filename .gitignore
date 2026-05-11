@@ -1,5 +1,6 @@
 # Project dependencies
 .cache
+.env
 node_modules
 yarn-error.log
 yarn.lock
@@ -8,7 +9,9 @@ package-lock.json
 # Build directory
 /public
 .DS_Store
-
 .vscode/
 sonar-scanner-4.7.0.2747-windows
 .github\workflows\test.yaml
+
+# Perso
+MEMO.MD

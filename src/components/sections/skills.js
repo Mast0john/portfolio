@@ -1,1031 +1,773 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
-import { CSSTransition } from 'react-transition-group';
-import styled from 'styled-components';
-import { srConfig } from '@config';
-import { KEY_CODES } from '@utils';
-import sr from '@utils/sr';
-import Img from 'gatsby-image';
-import Masonry from 'react-masonry-css';
-import { Link, Trans, useTranslation } from 'gatsby-plugin-react-i18next';
+import styled, { createGlobalStyle } from 'styled-components';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Trans, useTranslation } from 'gatsby-plugin-react-i18next';
 
+import AllView from '../gridComponents/views/allView';
+import HardSkillsView from '../gridComponents/views/hardSkillsView';
+import MadSkillsView from '../gridComponents/views/madSkillsView';
+import SoftSkillsView from '../gridComponents/views/softSkillsView';
+
+/* ─── Palette ──────────────────────────────────────────────── */
+const C = {
+  bg: '#0d0d1a',
+  surface: '#12121f',
+  card: '#1a1a2e',
+  border: '#252540',
+  purple: '#7c6fe0',
+  purpleGlow: '#7c6fe033',
+  cyan: '#00d4d4',
+  cyanGlow: '#00d4d420',
+  green: '#00c896',
+  greenGlow: '#00c89620',
+  orange: '#ff8c42',
+  orangeGlow: '#ff8c4220',
+  pink: '#e066a0',
+  pinkGlow: '#e066a020',
+  yellow: '#f5c842',
+  yellowGlow: '#f5c84220',
+  muted: '#5a5a7a',
+  text: '#e0e0f0',
+  textDim: '#8888aa',
+};
+
+/* ═══════════════════════════════════════════════════════════
+   GLOBAL STYLES  (fonts + scrollbar)
+══════════════════════════════════════════════════════════════ */
+const GlobalStyle = createGlobalStyle`
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  ::-webkit-scrollbar            { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track      { background: ${C.bg}; }
+  ::-webkit-scrollbar-thumb      { background: ${C.border}; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover{ background: ${C.muted}; }
+`;
+
+/* ═══════════════════════════════════════════════════════════
+   STYLED SECTION  — every CSS rule lives here.
+   Dynamic accent colors are injected as --c (CSS custom
+   property) on each element that needs one.
+   Alpha variants are expressed with color-mix().
+══════════════════════════════════════════════════════════════ */
 const StyledSkillsSection = styled.section`
-  max-width: 1000px;
-
-  .inner {
-    display: block;
-  }
-
-  .more-button {
-    ${({ theme }) => theme.mixins.button};
-    margin: 20px 20px 20px;
-    position: relative;
-    align-items: center;
-  }
-`;
-
-const StyledTabList = styled.div`
-  position: relative;
-  z-index: 3;
-  width: max-content;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-
-  display: flex;
-  overflow-x: auto;
-  width: calc(100% + 100px);
-  margin-left: -50px;
-  margin-bottom: 30px;
-
-  @media (max-width: 480px) {
-    width: calc(100% + 50px);
-    margin-left: -25px;
-  }
-
-  li {
-    &:first-of-type {
-        margin-left: 50px;
-        @media (max-width: 480px) {
-        margin-left: 25px;
-      }
-    }
-    &:last-of-type {
-        padding-right: 50px;
-        @media (max-width: 480px) {
-        padding-right: 25px;
-      }
-    }
-  }
-`;
-
-const StyledTabButton = styled.button`
-  ${({ theme }) => theme.mixins.link};
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: var(--tab-height);
-  padding: 0 20px 2px;
-  border-left: 2px solid var(--lightest-navy);
-  background-color: transparent;
-  color: ${({ isActive }) => (isActive ? 'var(--green)' : 'var(--slate)')};
-  font-family: var(--font-mono);
-  font-size: var(--fz-xs);
-  text-align: left;
-  white-space: nowrap;
-
-  padding: 0 15px 2px;
-
-  ${({ theme }) => theme.mixins.flexCenter};
-  min-width: 120px;
-  padding: 0 15px;
-  border-left: 0;
-  border-bottom: 2px solid var(--lightest-navy);
-  text-align: center;
-
-  &:hover,
-  &:focus {
-    background-color: var(--light-navy);
-  }
-`;
-
-const StyledHighlight = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  width: 2px;
-  height: var(--tab-height);
-  border-radius: var(--border-radius);
-  background: var(--green);
-  transform: translateY(calc(${({ activeTabId }) => activeTabId} * var(--tab-height)));
-  transition: transform 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
-  transition-delay: 0.1s;
-
-  @media (max-width: 11600px) {
-    top: auto;
-    bottom: 0;
-    width: 100%;
-    max-width: var(--tab-v-width);
-    height: 2px;
-    transform: translateX(calc(${({ activeTabId }) => activeTabId} * var(--tab-v-width)));
-  }
-
-  @media (max-width: 1150px) {
-    top: auto;
-    bottom: 0;
-    width: 100%;
-    max-width: var(--tab-width);
-    height: 2px;
-    transform: translateX(calc(${({ activeTabId }) => activeTabId} * var(--tab-width)));
-  }
-`;
-
-const StyledHighlightDesign = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  width: 2px;
-  height: var(--tab-height);
-  border-radius: var(--border-radius);
-  background: var(--green);
-  transform: translateY(calc(${({ activeTab2Id }) => activeTab2Id} * var(--tab-height)));
-  transition: transform 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
-  transition-delay: 0.1s;
-
-  @media (max-width: 11600px) {
-    top: auto;
-    bottom: 0;
-    width: 100%;
-    max-width: var(--tab-v-design-width);
-    height: 2px;
-    transform: translateX(calc(${({ activeTab2Id }) => activeTab2Id} * var(--tab-v-design-width)));
-  }
-
-  @media (max-width: 1150px) {
-    top: auto;
-    bottom: 0;
-    width: 100%;
-    max-width: var(--tab-width);
-    height: 2px;
-    transform: translateX(calc(${({ activeTab2Id }) => activeTab2Id} * var(--tab-width)));
-  }
-`;
-
-const StyledHighlightLanguages = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  width: 2px;
-  height: var(--tab-height);
-  border-radius: var(--border-radius);
-  background: var(--green);
-  transform: translateY(calc(${({ activeTab3Id }) => activeTab3Id} * var(--tab-height)));
-  transition: transform 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
-  transition-delay: 0.1s;
-
-  @media (max-width: 11600px) {
-    top: auto;
-    bottom: 0;
-    width: 100%;
-    max-width: var(--tab-v-languages-width);
-    height: 2px;
-    transform: translateX(calc(${({ activeTab3Id }) => activeTab3Id} * var(--tab-v-languages-width)));
-  }
-
-  @media (max-width: 1150px) {
-    top: auto;
-    bottom: 0;
-    width: 100%;
-    max-width: var(--tab-v-min-languages-width);
-    height: 2px;
-    transform: translateX(calc(${({ activeTab3Id }) => activeTab3Id} * var(--tab-v-min-languages-width)));
-  }
-`;
-
-const StyledTabPanels = styled.div`
-  margin-left: 20px;
-  margin-left: 0;
-
-`;
-
-const StyledTabPanel = styled.div`
-  width: 100%;
-  height: auto;
-  padding: 10px 5px;
-
-  .my-masonry-grid {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  margin-left: -30px;
-  width: auto;
-  background-color: transparent;
-  }
-  .my-masonry-grid_column {
-    padding-left: 30px;
-    background-clip: padding-box;
-    background-color: transparent;
-    @media (max-width: 768px) {
-      height: 100%;
-    }
-  }
-
-  .my-masonry-grid_column > div {
-    margin-bottom: 30px;
-  }
-
-  ul {
-    ${({ theme }) => theme.mixins.fancyList};
-  }
-
-  h3 {
-    margin-bottom: 2px;
-    font-size: var(--fz-xxl);
-    font-weight: 500;
-    line-height: 1.3;
-
-    .category {
-      color: var(--green);
-    }
-  }
-
-  .txtlogo {
-    margin-bottom: 25px;
-    color: var(--light-slate);
-    font-family: var(--font-mono);
-    font-size: var(--fz-xs);
-    text-align: center;
-  }
-
-  .skill-image {
-    ${({ theme }) => theme.mixins.boxShadow};
+  /* ─────────────────────────────── ROOT */
+  :root {
+    min-height: 100vh;
+    padding: 36px 28px;
+    font-family: 'Space Grotesk', sans-serif;
+    color: ${C.text};
     position: relative;
     z-index: 1;
+    pointer-events: auto;
+  }
 
-    @media (max-width: 768px) {
-      height: 100%;
-      width: 33%;
-    }
+  /* ─────────────────────────────── PARTICLES (arrière-plan) */
+  #tsparticles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
 
-    a {
-      width: 100%;
-      background-color: var(--green);
-      border-radius: var(--border-radius);
-      vertical-align: middle;
+  /* ─────────────────────────────── HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 42px;
+    position: relative;
+    z-index: 20;
+  }
+  .header__row {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .header__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, ${C.purple}, ${C.cyan});
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    z-index: 20;
+  }
+  .header__title {
+    font-size: 28px;
+    font-weight: 700;
+    color: ${C.text};
+    letter-spacing: 3px;
+  }
+  .header__badge {
+    font-size: 11px;
+    color: ${C.purple};
+    background: ${C.purpleGlow};
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    border: 1px solid ${C.purple}50;
+  }
+  .header__subtitle {
+    color: ${C.textDim};
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
 
-      &:hover,
-      &:focus {
-        background: transparent;
-        outline: 0;
+  /* ─────────────────────────────── FILTERS */
+  .filters {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 100 !important;
+    pointer-events: auto !important;
+  }
+  .filter-btn {
+    padding: 10px 28px;
+    border-radius: 28px;
+    border: 1.5px solid;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    z-index: 100 !important;
+    pointer-events: auto !important;
+  }
+  .filter-btn__icon {
+    font-size: 15px;
+    z-index: 20;
+  }
+  .filter-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 8px var(--c);
+    display: inline-block;
+  }
 
-        &:before,
-        .img {
-          filter: none;
+  /* ─────────────────────────────── CONTENT */
+  .content {
+    max-width: 1320px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    pointer-events: auto !important;
+  }
+
+  /* ─────────────────────────────── TOP SECTION */
+  .top-section {
+    margin-bottom: 28px;
+    position: relative;
+  }
+  .top-section__btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    background: ${C.card};
+    border: 1px solid; /* color animated by motion */
+    cursor: pointer;
+    z-index: 10;
+  }
+  .top-section__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--c) 25%, transparent),
+      color-mix(in srgb, var(--c) 8%, transparent)
+    );
+    border: 1px solid color-mix(in srgb, var(--c) 38%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    z-index: 10;
+  }
+  .top-section__labels {
+    flex: 1;
+    text-align: left;
+  }
+  .top-section__label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--c);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1.2px;
+  }
+  .top-section__sublabel {
+    font-size: 10px;
+    color: ${C.textDim};
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 2px;
+  }
+  .top-section__chevron {
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    display: inline-block;
+  }
+  .top-section__body {
+    overflow: hidden;
+    border-left: 2px solid color-mix(in srgb, var(--c) 19%, transparent);
+    padding-left: 18px;
+    padding-bottom: 8px;
+  }
+
+  /* ─────────────────────────────── CATEGORY BLOCK */
+  .category-block {
+    margin-bottom: 16px;
+    border: 1px solid ${C.border};
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.25s ease;
+    position: relative;
+    z-index: 10;
+  }
+  .category-block--open {
+    border-color: color-mix(in srgb, var(--c) 21%, transparent);
+  }
+  .category-block__btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    background: ${C.card};
+    border: none;
+    border-bottom: 1px solid transparent;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    z-index: 10;
+  }
+  .category-block--open .category-block__btn {
+    background: color-mix(in srgb, var(--c) 4%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--c) 12%, transparent);
+  }
+  .category-block__icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--c) 25%, transparent),
+      color-mix(in srgb, var(--c) 8%, transparent)
+    );
+    border: 1px solid color-mix(in srgb, var(--c) 31%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  .category-block__labels {
+    flex: 1;
+    text-align: left;
+  }
+  .category-block__label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--c);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+  }
+  .category-block__count {
+    font-size: 9px;
+    color: ${C.muted};
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 2px;
+  }
+  .category-block__chevron {
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    display: inline-block;
+    color: ${C.muted};
+  }
+  .category-block--open .category-block__chevron {
+    color: var(--c);
+  }
+  .category-block__body {
+    overflow: hidden;
+  }
+  .category-block__groups {
+    padding: 14px 18px 0;
+  }
+  .category-block__panel {
+    padding: 0 18px 16px;
+  }
+
+  /* ─────────────────────────────── SUB-GROUP */
+  .subgroup {
+    margin-bottom: 14px;
+  }
+  .subgroup__btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 0;
+    z-index: 10;
+  }
+  .subgroup__chevron,
+  .subgroup__name {
+    font-size: 10px;
+    color: ${C.muted};
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.8px;
+    display: inline-block;
+  }
+  .subgroup__count {
+    font-size: 9px;
+    color: ${C.muted}80;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .subgroup__body {
+    overflow: hidden;
+  }
+  .cards-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 4px;
+  }
+
+  /* ─────────────────────────────── SKILL CARD */
+  .skill-card {
+    border-top: 3px solid var(--c);
+    border-radius: 10px;
+    padding: 14px 10px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    min-width: 90px;
+    max-width: 112px;
+    position: relative;
+    cursor: default;
+    z-index: 10;
+  }
+  .skill-card--clickable {
+    cursor: pointer;
+  }
+  .skill-card__dot {
+    position: absolute;
+    top: 5px;
+    right: 6px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 6px var(--c);
+  }
+  .skill-card__logo {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+  }
+  .skill-card__emoji {
+    font-size: 26px;
+  }
+  .skill-card__name {
+    font-size: 10px;
+    color: ${C.text};
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.35;
+  }
+  .skill-card__sublabel {
+    font-size: 8.5px;
+    color: ${C.textDim};
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  /* ─────────────────────────────── DETAIL PANEL */
+  .detail-panel {
+    border-radius: 12px;
+    position: relative;
+    z-index: 30;
+    pointer-events: auto;
+  }
+  .detail-panel--info {
+    padding: 18px 24px;
+    background: ${C.card};
+    border: 1px solid color-mix(in srgb, var(--c) 44%, transparent);
+  }
+  .detail-panel--hint {
+    padding: 14px 24px;
+    border: 1px solid ${C.border};
+  }
+  .detail-panel__inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .detail-panel__bar {
+    width: 4px;
+    align-self: stretch;
+    border-radius: 2px;
+    background: var(--c);
+    flex-shrink: 0;
+  }
+  .detail-panel__content {
+    flex: 1;
+  }
+  .detail-panel__title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .detail-panel__title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--c);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .detail-panel__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: ${C.textDim};
+    font-size: 16px;
+    padding: 0;
+    line-height: 1;
+    margin-left: auto;
+    z-index: 30;
+    pointer-events: auto;
+  }
+  .detail-panel__body {
+    margin: 0;
+    font-size: 13px;
+    color: ${C.textDim};
+    line-height: 1.65;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .detail-panel__hint {
+    margin: 0;
+    text-align: center;
+    color: ${C.muted};
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ─────────────────────────────── VIEW TOGGLE */
+  .view-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    justify-content: center;
+    z-index: 20;
+  }
+  .view-toggle__btn {
+    padding: 8px 22px;
+    border-radius: 24px;
+    border: 1px solid;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    z-index: 20;
+    pointer-events: auto;
+  }
+
+  /* ─────────────────────────────── FLOWCHART */
+  .flowchart-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 74vh;
+    border-radius: 16px;
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
+  }
+  .flowchart-panel {
+    margin-top: 16px;
+    position: relative;
+    z-index: 10;
+  }
+`;
+
+/* ─── Motion presets ───────────────────────────────────────── */
+const spring = { type: 'spring', stiffness: 380, damping: 28 };
+const springSnap = { type: 'spring', stiffness: 500, damping: 35 };
+const ease = { duration: 0.3, ease: [0.4, 0, 0.2, 1] };
+
+const stagger = (d = 0.06) => ({
+  hidden: {},
+  visible: { transition: { staggerChildren: d } },
+});
+
+/* ─── GraphQL query ────────────────────────────────────────── */
+const SKILLS_QUERY = graphql`
+  query SkillsPortfolioQuery {
+    allMarkdownRemark(
+      filter: { fileAbsolutePath: { regex: "/content/skills/" } }
+      sort: { frontmatter: { order: ASC } }
+    ) {
+      nodes {
+        frontmatter {
+          type
+          name
+          section
+          category
+          group
+          infoKey
+          title
+          slug
+          hex
+          emoji
+          color
+          sublabel
+          order
+          icon
+          logo {
+            childImageSharp {
+              fluid(quality: 100) {
+                ...GatsbyImageSharpFluid
+              }
+            }
+          }
         }
-      }
-
-      &:before {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 3;
-        transition: var(--transition);
-        background-color: var(--navy);
-        mix-blend-mode: screen;
-      }
-    }
-
-    .img {
-      border-radius: var(--border-radius);
-      mix-blend-mode: multiply;
-      filter: grayscale(100%) contrast(1) brightness(90%);
-
-      @media (max-width: 768px) {
-        object-fit: cover;
-        width: auto;
-        height: 100%;
-        filter: grayscale(100%) contrast(1) brightness(80%);
+        rawMarkdownBody
       }
     }
   }
 `;
 
+/* ─── Filter Buttons ─────────────────────────────────────── */
+const FILTERS = [
+  { id: 'all', label: 'All', color: C.text, icon: '◈', glow: '#ffffff' },
+  { id: 'hard', label: 'Hard Skills', color: C.purple, icon: '💻', glow: C.purple },
+  { id: 'soft', label: 'Soft Skills', color: C.green, icon: '🗣️', glow: C.green },
+  { id: 'mad', label: 'Mad Skills', color: C.yellow, icon: '⚡', glow: C.yellow },
+];
+
+/* ─── Data helpers ─────────────────────────────────────────── */
+function useSkillsData() {
+  const data = useStaticQuery(SKILLS_QUERY);
+  const nodes = data.allMarkdownRemark.nodes;
+
+  // Build SKILL_INFO  { infoKey → { title, color, body } }
+  const SKILL_INFO = {};
+  nodes
+    .filter(n => n.frontmatter.type === 'skill')
+    .forEach(({ frontmatter: fm, rawMarkdownBody }) => {
+      if (fm.infoKey) {
+        SKILL_INFO[fm.infoKey] = {
+          title: fm.title,
+          color: fm.color,
+          body: rawMarkdownBody.trim(),
+        };
+      }
+    });
+
+  // Build category map  { "section/category" → { name, icon, color } }
+  const catMap = {};
+  nodes
+    .filter(n => n.frontmatter.type === 'category')
+    .forEach(({ frontmatter: fm }) => {
+      catMap[`${fm.section}/${fm.slug}`] = { name: fm.name, icon: fm.icon, color: fm.color };
+    });
+
+  // Build SKILLS hierarchy
+  // SKILLS.hardSkills / softSkills / madSkills
+  // Each key → { color, icon, groups: { groupName → [items] } }
+  const sectionMap = {
+    'hard-skills': 'hardSkills',
+    'soft-skills': 'softSkills',
+    'mad-skills': 'madSkills',
+  };
+
+  const SKILLS = { hardSkills: {}, softSkills: {}, madSkills: {} };
+
+  // Insert categories first (ordered)
+  nodes
+    .filter(n => n.frontmatter.type === 'category')
+    .forEach(({ frontmatter: fm }) => {
+      const sKey = sectionMap[fm.section];
+      if (!sKey) {
+        return;
+      }
+      SKILLS[sKey][fm.name] = { color: fm.color, icon: fm.icon, groups: {} };
+    });
+
+  // Insert skills into their category groups
+  nodes
+    .filter(n => n.frontmatter.type === 'skill')
+    .forEach(({ frontmatter: fm }) => {
+      const sKey = sectionMap[fm.section];
+      if (!sKey) {
+        return;
+      }
+      const catMeta = catMap[`${fm.section}/${fm.category}`];
+      if (!catMeta) {
+        return;
+      }
+      const catName = catMeta.name;
+      if (!SKILLS[sKey][catName]) {
+        return;
+      }
+      const groups = SKILLS[sKey][catName].groups;
+      if (!groups[fm.group]) {
+        groups[fm.group] = [];
+      }
+      groups[fm.group].push({
+        name: fm.name,
+        slug: fm.slug || undefined,
+        hex: fm.hex || undefined,
+        emoji: fm.emoji || undefined,
+        sublabel: fm.sublabel || undefined,
+        infoKey: fm.infoKey || undefined,
+        logo: fm.logo || undefined,
+      });
+    });
+
+  return { SKILLS, SKILL_INFO };
+}
 
 const Skills = () => {
   const { t } = useTranslation();
-
-  const data = useStaticQuery(graphql`
-    query {
-      devSkills: allMarkdownRemark(
-        filter: { fileAbsolutePath: { regex: "/skills/dev/" } }
-        sort: { frontmatter: {date: DESC} }
-      ) {
-        edges {
-          node {
-            frontmatter {
-              title
-              logo1 {
-                childImageSharp {
-                  fluid(quality: 100) {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo2 {
-                childImageSharp {
-                  fluid(quality: 100)  {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo3 {
-                childImageSharp {
-                  fluid(quality: 100)  {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo4 {
-                childImageSharp {
-                  fluid(quality: 100) {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo5 {
-                childImageSharp {
-                  fluid(quality: 100)  {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo6 {
-                childImageSharp {
-                  fluid(quality: 100)  {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo7 {
-                childImageSharp {
-                  fluid(quality: 100)  {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo8 {
-                childImageSharp {
-                  fluid(quality: 100)  {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo9 {
-                childImageSharp {
-                  fluid(quality: 100)  {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo10 {
-                childImageSharp {
-                  fluid(quality: 100)  {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              txtlogo1
-              txtlogo2
-              txtlogo3
-              txtlogo4
-              txtlogo5
-              txtlogo6
-              txtlogo7
-              txtlogo8
-              txtlogo9
-              txtlogo10
-              url1
-              url2
-              url3
-              url4
-              url5
-              url6
-              url7
-              url8
-              url9
-              url10
-              category
-            }
-            html
-          }
-        }
-      }
-      designSkills: allMarkdownRemark(
-        filter: { fileAbsolutePath: { regex: "/skills/design/" } }
-        sort: { frontmatter: {date: ASC} }
-      ) {
-        edges {
-          node {
-            frontmatter {
-              title
-              logo1 {
-                childImageSharp {
-                  fluid(quality: 100) {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo2 {
-                childImageSharp {
-                  fluid(quality: 100)  {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo3 {
-                childImageSharp {
-                  fluid(quality: 100)  {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo4 {
-                childImageSharp {
-                  fluid(quality: 100) {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo5 {
-                childImageSharp {
-                  fluid(quality: 100)  {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo6 {
-                childImageSharp {
-                  fluid(quality: 100)  {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo7 {
-                childImageSharp {
-                  fluid(quality: 100)  {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              txtlogo1
-              txtlogo2
-              txtlogo3
-              txtlogo4
-              txtlogo5
-              txtlogo6
-              txtlogo7
-              url1
-              url2
-              url3
-              url4
-              url5
-              url6
-              url7
-              category
-            }
-            html
-          }
-        }
-      }
-      languagesSkills: allMarkdownRemark(
-        filter: { fileAbsolutePath: { regex: "/skills/languages/" } }
-        sort: { frontmatter: {date: ASC} }
-      ) {
-        edges {
-          node {
-            frontmatter {
-              title
-              logo1 {
-                childImageSharp {
-                  fluid(quality: 100) {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo2 {
-                childImageSharp {
-                  fluid(quality: 100)  {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              logo3 {
-                childImageSharp {
-                  fluid(quality: 100)  {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
-              txtlogo1
-              txtlogo2
-              txtlogo3
-              category
-            }
-            html
-          }
-        }
-      }
-    }
-  `);
-
-  const devSkillsData = data.devSkills.edges;
-  const designSkillsData = data.designSkills.edges;
-  const languagesSkillsData = data.languagesSkills.edges;
-
-  const [activeTabId, setActiveTabId] = useState(0);
-  const [tabFocus, setTabFocus] = useState(null);
-  const tabs = useRef([]);
-  const [activeTab2Id, setActiveTab2Id] = useState(0);
-  const [tab2Focus, setTab2Focus] = useState(null);
-  const tabs2 = useRef([]);
-  const [activeTab3Id, setActiveTab3Id] = useState(0);
-  const [tab3Focus, setTab3Focus] = useState(null);
-  const tabs3 = useRef([]);
-
-  const [showMoreDev, setShowMoreDev] = useState(true);
-  const [showMoreDesign, setShowMoreDesign] = useState(false);
-  const [showMoreLanguages, setShowMoreLanguages] = useState(false);
-
-  const displayDev = {
-    display: showMoreDev ? 'flex' : 'none',
+  const { SKILLS, SKILL_INFO } = useSkillsData();
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 80);
+    return () => clearTimeout(t);
+  }, []);
+  const handleCategoryClick = categoryName => {
+    // Normalize category identifiers coming from child components or filter buttons
+    const map = {
+      'Hard Skills': 'hard',
+      'Soft Skills': 'soft',
+      'Mad Skills': 'mad',
+      hard: 'hard',
+      soft: 'soft',
+      mad: 'mad',
+      all: 'all',
+    };
+    const id = map[categoryName] || categoryName;
+    setActiveCategory(id);
   };
 
-  const displayDesign = {
-    display: showMoreDesign ? 'flex' : 'none',
-  };
-
-  const displayLanguages = {
-    display: showMoreLanguages ? 'flex' : 'none',
-  };
-
-  const skillsDevToShow = showMoreDev ? devSkillsData : '';
-  const skillsDesignToShow = showMoreDesign ? designSkillsData : '' && !showMoreDev && !showMoreLanguages;
-  const skillsLanguagesToShow = showMoreLanguages ? languagesSkillsData : '' && !showMoreDev && !showMoreDesign;
-
-  const revealContainer = useRef(null);
-  useEffect(() => sr.reveal(revealContainer.current, srConfig()), []);
-
-  const focusTab = () => {
-    if (tabs.current[tabFocus]) {
-      tabs.current[tabFocus].focus();
-      return;
-    }
-    // If we're at the end, go to the start
-    if (tabFocus >= tabs.current.length) {
-      setTabFocus(0);
-    }
-    // If we're at the start, move to the end
-    if (tabFocus < 0) {
-      setTabFocus(tabs.current.length - 1);
-    }
-  };
-  const focusTab2 = () => {
-    if (tabs2.current[tab2Focus]) {
-      tabs2.current[tab2Focus].focus();
-      return;
-    }
-    // If we're at the end, go to the start
-    if (tab2Focus >= tabs2.current.length) {
-      setTab2Focus(0);
-    }
-    // If we're at the start, move to the end
-    if (tab2Focus < 0) {
-      setTab2Focus(tabs2.current.length - 1);
-    }
-  };
-  const focusTab3 = () => {
-    if (tabs3.current[tab3Focus]) {
-      tabs3.current[tab3Focus].focus();
-      return;
-    }
-    // If we're at the end, go to the start
-    if (tab3Focus >= tabs3.current.length) {
-      setTab3Focus(0);
-    }
-    // If we're at the start, move to the end
-    if (tab3Focus < 0) {
-      setTab3Focus(tabs3.current.length - 1);
-    }
-  };
-
-  // Only re-run the effect if tabFocus changes
-  useEffect(() => focusTab(), [tabFocus]);
-  useEffect(() => focusTab2(), [tab2Focus]);
-  useEffect(() => focusTab3(), [tab3Focus]);
-
-  // Focus on tabs when using up & down arrow keys
-  const onKeyDown = e => {
-    switch (e.key) {
-      case KEY_CODES.ARROW_UP: {
-        e.preventDefault();
-        setTabFocus(tabFocus - 1);
-        break;
-      }
-
-      case KEY_CODES.ARROW_DOWN: {
-        e.preventDefault();
-        setTabFocus(tabFocus + 1);
-        break;
-      }
-
-      default: {
-        break;
-      }
-    }
-  };
-  const onKeyDown2 = e => {
-    switch (e.key) {
-      case KEY_CODES.ARROW_UP: {
-        e.preventDefault();
-        setTab2Focus(tab2Focus - 1);
-        break;
-      }
-
-      case KEY_CODES.ARROW_DOWN: {
-        e.preventDefault();
-        setTab2Focus(tab2Focus + 1);
-        break;
-      }
-
-      default: {
-        break;
-      }
-    }
-  };
-  const onKeyDown3 = e => {
-    switch (e.key) {
-      case KEY_CODES.ARROW_UP: {
-        e.preventDefault();
-        setTab3Focus(tab3Focus - 1);
-        break;
-      }
-
-      case KEY_CODES.ARROW_DOWN: {
-        e.preventDefault();
-        setTab3Focus(tab3Focus + 1);
-        break;
-      }
-
-      default: {
-        break;
-      }
-    }
-  };
-
-  const breakpointColumnsObj = {
-    default: 8,
-    1100: 3,
-    700: 2,
-    500: 1,
-  };
+  // const handleClosePanel = () => {
+  //   setSelectedSkill(null);
+  // };
 
   return (
-    <StyledSkillsSection id="skills" ref={revealContainer}>
-      <h2 className="numbered-heading">{t("Skills")}</h2>
+    <div style={{ position: 'relative', zIndex: 1, pointerEvents: 'auto' }}>
+      <GlobalStyle />
+      <StyledSkillsSection>
+        <h2 className="numbered-heading">{t('Skills')}</h2>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...ease, duration: 0.5 }}
+          style={{ textAlign: 'center', marginBottom: 42 }}>
+          <motion.div
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
+            {/* Icône et titre */}
+          </motion.div>
+          <p style={{ color: C.textDim, fontSize: 12, fontFamily: `'JetBrains Mono',monospace` }}>
+            <Trans>Select a category · Expand/collapse · Click on a skill</Trans>
+          </p>
+        </motion.div>
 
-      <div className="inner">
-
-        <button className="more-button" onClick={() => setShowMoreDev(!showMoreDev)}>
-          {showMoreDev ? '-' : '+'} <Trans>Development</Trans>
-        </button>
-        <button className="more-button" onClick={() => setShowMoreDesign(!showMoreDesign)}>
-          {showMoreDesign ? '-' : '+'} <Trans>Design</Trans>
-        </button>
-        <button className="more-button" onClick={() => setShowMoreLanguages(!showMoreLanguages)}>
-          {showMoreLanguages ? '-' : '+'} <Trans>Languages</Trans>
-        </button>
-
-        <StyledTabList style={displayDev} role="tablist" aria-label="Skill tabs" onKeyDown={e => onKeyDown(e)}>
-          {skillsDevToShow &&
-              skillsDevToShow.map(({ node }, i) => {
-                const { category } = node.frontmatter;
-                return (
-                  <StyledTabButton
-                    key={i}
-                    isActive={activeTabId === i}
-                    onClick={() => setActiveTabId(i)}
-                    ref={el => (tabs.current[i] = el)}
-                    id={`tab-${i}`}
-                    role="tab"
-                    tabIndex={activeTabId === i ? '0' : '-1'}
-                    aria-selected={activeTabId === i ? true : false}
-                    aria-controls={`panel-${i}`}>
-                    <span><Trans>{category}</Trans></span>
-                  </StyledTabButton>
-                );
-              })}
-          <StyledHighlight activeTabId={activeTabId} />
-        </StyledTabList>
-        <StyledTabPanels style={displayDev}>
-          {skillsDevToShow &&
-          skillsDevToShow.map(({ node }, i) => {
-            const { frontmatter, html } = node;
-            const { logo1, logo2, logo3, logo4, logo5, logo6, logo7, logo8, logo9, logo10, logo11,
-              txtlogo1, txtlogo2, txtlogo3, txtlogo4, txtlogo5, txtlogo6, txtlogo7, txtlogo8, txtlogo9, txtlogo10, txtlogo11,
-              url1, url2, url3, url4, url5, url6, url7, url8, url9, url10, url11 } = frontmatter;
-
-            // Some logos of skills. If haven't logos of skills, nothing appeared
-            const logoSkill1 = logo1 ? (
-              <div className="skill-image">
-                <a href={url1 ? url1 : '#'}>
-                  <Img fluid={logo1.childImageSharp.fluid} alt={txtlogo1 ? txtlogo1 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo1 ? txtlogo1 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill2 = logo2 ? (
-              <div className="skill-image">
-                <a href={url2 ? url2 : '#'}>
-                  <Img fluid={logo2.childImageSharp.fluid} alt={txtlogo2 ? txtlogo2 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo2 ? txtlogo2 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill3 = logo3 ? (
-              <div className="skill-image">
-                <a href={url3 ? url3 : '#'}>
-                  <Img fluid={logo3.childImageSharp.fluid} alt={txtlogo3 ? txtlogo3 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo3 ? txtlogo3 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill4 = logo4 ? (
-              <div className="skill-image">
-                <a href={url4 ? url4 : '#'}>
-                  <Img fluid={logo4.childImageSharp.fluid} alt={txtlogo4 ? txtlogo4 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo4 ? txtlogo4 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill5 = logo5 ? (
-              <div className="skill-image">
-                <a href={url5 ? url5 : '#'}>
-                  <Img fluid={logo5.childImageSharp.fluid} alt={txtlogo5 ? txtlogo5 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo5 ? txtlogo5 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill6 = logo6 ? (
-              <div className="skill-image">
-                <a href={url6 ? url6 : '#'}>
-                  <Img fluid={logo6.childImageSharp.fluid} alt={txtlogo6 ? txtlogo6 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo6 ? txtlogo6 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill7 = logo7 ? (
-              <div className="skill-image">
-                <a href={url7 ? url7 : '#'}>
-                  <Img fluid={logo7.childImageSharp.fluid} alt={txtlogo7 ? txtlogo7 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo7 ? txtlogo7 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill8 = logo8 ? (
-              <div className="skill-image">
-                <a href={url8 ? url8 : '#'}>
-                  <Img fluid={logo8.childImageSharp.fluid} alt={txtlogo8 ? txtlogo8 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo8 ? txtlogo8 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill9 = logo9 ? (
-              <div className="skill-image">
-                <a href={url9 ? url9 : '#'}>
-                  <Img fluid={logo9.childImageSharp.fluid} alt={txtlogo9 ? txtlogo9 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo9 ? txtlogo9 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill10 = logo10 ? (
-              <div className="skill-image">
-                <a href={url10 ? url10 : '#'}>
-                  <Img fluid={logo10.childImageSharp.fluid} alt={txtlogo10 ? txtlogo10 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo10 ? txtlogo10 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill11 = logo11 ? (
-              <div className="skill-image">
-                <a href={url11 ? url11 : '#'}>
-                  <Img fluid={logo11.childImageSharp.fluid} alt={txtlogo11 ? txtlogo11 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo11 ? txtlogo11 : ''}</p>
-              </div>
-            ) : ('');
-
-            return (
-              <CSSTransition key={i} in={activeTabId === i} timeout={250} classNames="fade">
-                <StyledTabPanel
-                  id={`panel-${i}`}
-                  role="tabpanel"
-                  tabIndex={activeTabId === i ? '0' : '-1'}
-                  aria-labelledby={`tab-${i}`}
-                  aria-hidden={activeTabId !== i}
-                  hidden={activeTabId !== i}>
-
-                  <Masonry breakpointCols={breakpointColumnsObj}
-                    className="my-masonry-grid"
-                    columnClassName="my-masonry-grid_column">
-                    {logoSkill1}{logoSkill2}{logoSkill3}{logoSkill4}{logoSkill5}
-                    {logoSkill6}{logoSkill7}{logoSkill8}{logoSkill9}{logoSkill10}
-                    {logoSkill11}
-                  </Masonry>
-
-                  <div dangerouslySetInnerHTML={{ __html: html }} />
-                </StyledTabPanel>
-              </CSSTransition>
-            );
-          })}
-        </StyledTabPanels>
-
-        <StyledTabList style={displayDesign} role="tablist" aria-label="Skill Design tabs" onKeyDown={e => onKeyDown2(e)}>
-          {skillsDesignToShow &&
-          skillsDesignToShow.map(({ node }, j) => {
-            const { category } = node.frontmatter;
-            return (
-              <StyledTabButton
-                key={j}
-                isActive={activeTab2Id === j}
-                onClick={() => setActiveTab2Id(j)}
-                ref={el => (tabs2.current[j] = el)}
-                id={`tab-${j}`}
-                role="tab"
-                tabIndex={activeTab2Id === j ? '0' : '-1'}
-                aria-selected={activeTab2Id === j ? true : false}
-                aria-controls={`panel-${j}`}>
-                <span><Trans>{category}</Trans></span>
-              </StyledTabButton>
-            );
-          })}
-          <StyledHighlightDesign activeTab2Id={activeTab2Id} />
-        </StyledTabList>
-        <StyledTabPanels style={displayDesign}>
-          {skillsDesignToShow &&
-          skillsDesignToShow.map(({ node }, j) => {
-            const { frontmatter, html } = node;
-            const { logo1, logo2, logo3, logo4, logo5, logo6, logo7,
-              txtlogo1, txtlogo2, txtlogo3, txtlogo4, txtlogo5, txtlogo6, txtlogo7,
-              url1, url2, url3, url4, url5, url6, url7 } = frontmatter;
-
-            // Some exemples logos. If haven't logos of skills, nothing appeared
-            const logoSkill1 = logo1 ? (
-              <div className="skill-image">
-                <a href={url1 ? url1 : '#'}>
-                  <Img fluid={logo1.childImageSharp.fluid} alt={txtlogo1 ? txtlogo1 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo1 ? txtlogo1 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill2 = logo2 ? (
-              <div className="skill-image">
-                <a href={url2 ? url2 : '#'}>
-                  <Img fluid={logo2.childImageSharp.fluid} alt={txtlogo2 ? txtlogo2 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo2 ? txtlogo2 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill3 = logo3 ? (
-              <div className="skill-image">
-                <a href={url3 ? url3 : '#'}>
-                  <Img fluid={logo3.childImageSharp.fluid} alt={txtlogo3 ? txtlogo3 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo3 ? txtlogo3 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill4 = logo4 ? (
-              <div className="skill-image">
-                <a href={url4 ? url4 : '#'}>
-                  <Img fluid={logo4.childImageSharp.fluid} alt={txtlogo4 ? txtlogo4 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo4 ? txtlogo4 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill5 = logo5 ? (
-              <div className="skill-image">
-                <a href={url5 ? url5 : '#'}>
-                  <Img fluid={logo5.childImageSharp.fluid} alt={txtlogo5 ? txtlogo5 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo5 ? txtlogo5 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill6 = logo6 ? (
-              <div className="skill-image">
-                <a href={url6 ? url6 : '#'}>
-                  <Img fluid={logo6.childImageSharp.fluid} alt={txtlogo6 ? txtlogo6 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo6 ? txtlogo6 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill7 = logo7 ? (
-              <div className="skill-image">
-                <a href={url7 ? url7 : '#'}>
-                  <Img fluid={logo7.childImageSharp.fluid} alt={txtlogo7 ? txtlogo7 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo7 ? txtlogo7 : ''}</p>
-              </div>
-            ) : ('');
-
-            return (
-              <CSSTransition key={j} in={activeTab2Id === j} timeout={250} classNames="fade">
-                <StyledTabPanel
-                  id={`panel-${j}`}
-                  role="tabpanel"
-                  tabIndex={activeTab2Id === j ? '0' : '-1'}
-                  aria-labelledby={`tab-${j}`}
-                  aria-hidden={activeTab2Id !== j}
-                  hidden={activeTab2Id !== j}>
-
-                  <Masonry breakpointCols={breakpointColumnsObj}
-                    className="my-masonry-grid"
-                    columnClassName="my-masonry-grid_column">
-                    {logoSkill1}{logoSkill2}{logoSkill3}{logoSkill4}{logoSkill5}
-                    {logoSkill6}{logoSkill7}
-                  </Masonry>
-
-                  <div dangerouslySetInnerHTML={{ __html: html }} />
-                </StyledTabPanel>
-              </CSSTransition>
-            );
-          })}
-        </StyledTabPanels>
-
-        <StyledTabList style={displayLanguages} role="tablist" aria-label="Skill Languages tabs" onKeyDown={e => onKeyDown3(e)}>
-          {skillsLanguagesToShow &&
-            skillsLanguagesToShow.map(({ node }, k) => {
-              const { category } = node.frontmatter;
+        {/* ── Filter buttons ── */}
+        {mounted && (
+          <motion.div
+            className="filters"
+            variants={stagger(0.1)}
+            initial="hidden"
+            animate="visible">
+            {FILTERS.map(f => {
+              const isActive = activeCategory === f.id;
               return (
-                <StyledTabButton
-                  key={k}
-                  isActive={activeTab3Id === k}
-                  onClick={() => setActiveTab3Id(k)}
-                  ref={el => (tabs3.current[k] = el)}
-                  id={`tab-${k}`}
-                  role="tab"
-                  tabIndex={activeTab3Id === k ? '0' : '-1'}
-                  aria-selected={activeTab3Id === k ? true : false}
-                  aria-controls={`panel-${k}`}>
-                  <span><Trans>{category}</Trans></span>
-                </StyledTabButton>
+                <motion.button
+                  key={f.id}
+                  className="filter-btn"
+                  style={{ '--c': f.color }}
+                  variants={{
+                    hidden: { opacity: 0, y: 30, scale: 0.85 },
+                    visible: { opacity: 1, y: 0, scale: 1, transition: spring },
+                  }}
+                  whileHover={{ scale: 1.05, boxShadow: `0 0 20px ${f.glow}40` }}
+                  whileTap={{ scale: 0.96 }}
+                  animate={
+                    isActive
+                      ? {
+                        borderColor: f.color,
+                        color: f.color,
+                        background: `${f.color}22`,
+                        scale: 1.06,
+                        boxShadow: `0 0 24px ${f.glow}50`,
+                      }
+                      : {
+                        borderColor: C.border,
+                        color: C.textDim,
+                        background: 'transparent',
+                        scale: 1,
+                      }
+                  }
+                  transition={springSnap}
+                  onClick={() => handleCategoryClick(f.id)}>
+                  <span className="filter-btn__icon">{f.icon}</span>
+                  <Trans>{f.label}</Trans>
+                  {isActive && <motion.span className="filter-dot" layoutId="filter-dot" />}
+                </motion.button>
               );
             })}
-          <StyledHighlightLanguages activeTab3Id={activeTab3Id}/>
-        </StyledTabList>
-        <StyledTabPanels style={displayLanguages }>
-          {skillsLanguagesToShow &&
-          skillsLanguagesToShow.map(({ node }, k) => {
-            const { frontmatter, html } = node;
-            const { logo1, logo2, logo3, txtlogo1, txtlogo2, txtlogo3 } = frontmatter;
+          </motion.div>
+        )}
 
-            // Some exemples logos. If haven't logos of skills, nothing appeared
-            const logoSkill1 = logo1 ? (
-              <div className="skill-image">
-                <a href={'#'}>
-                  <Img fluid={logo1.childImageSharp.fluid} alt={txtlogo1 ? txtlogo1 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo1 ? txtlogo1 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill2 = logo2 ? (
-              <div className="skill-image">
-                <a href={'#'}>
-                  <Img fluid={logo2.childImageSharp.fluid} alt={txtlogo2 ? txtlogo2 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo2 ? txtlogo2 : ''}</p>
-              </div>
-            ) : ('');
-            const logoSkill3 = logo3 ? (
-              <div className="skill-image">
-                <a href={'#'}>
-                  <Img fluid={logo3.childImageSharp.fluid} alt={txtlogo3 ? txtlogo3 : ''} className="img" />
-                </a>
-                <p className="txtlogo">{txtlogo3 ? txtlogo3 : ''}</p>
-              </div>
-            ) : ('');
-
-            return (
-              <CSSTransition key={k} in={activeTab3Id === k} timeout={250} classNames="fade">
-                <StyledTabPanel
-                  id={`panel-${k}`}
-                  role="tabpanel"
-                  tabIndex={activeTab3Id === k ? '0' : '-1'}
-                  aria-labelledby={`tab-${k}`}
-                  aria-hidden={activeTab3Id !== k}
-                  hidden={activeTab3Id !== k}>
-
-                  <Masonry breakpointCols={breakpointColumnsObj}
-                    className="my-masonry-grid"
-                    columnClassName="my-masonry-grid_column">
-                    {logoSkill1}{logoSkill2}{logoSkill3}
-                  </Masonry>
-
-                  <div dangerouslySetInnerHTML={{ __html: html }} />
-                </StyledTabPanel>
-              </CSSTransition>
-            );
-          })}
-        </StyledTabPanels>
-      </div>
-    </StyledSkillsSection>
+        {/* Content */}
+        {mounted && (
+          <div style={{ maxWidth: 1320, margin: '0 auto' }}>
+            <AnimatePresence mode="wait">
+              {activeCategory === 'all' && (
+                <AllView key="all" SKILLS={SKILLS} SKILL_INFO={SKILL_INFO} />
+              )}
+              {activeCategory === 'hard' && (
+                <HardSkillsView key="hard" SKILLS={SKILLS} SKILL_INFO={SKILL_INFO} />
+              )}
+              {activeCategory === 'soft' && (
+                <SoftSkillsView key="soft" SKILLS={SKILLS} SKILL_INFO={SKILL_INFO} />
+              )}
+              {activeCategory === 'mad' && (
+                <MadSkillsView key="mad" SKILLS={SKILLS} SKILL_INFO={SKILL_INFO} />
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+      </StyledSkillsSection>
+    </div>
   );
 };
+
+Skills.displayName = 'Skills';
 
 export default Skills;

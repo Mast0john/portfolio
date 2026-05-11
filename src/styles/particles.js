@@ -1,29 +1,81 @@
 import Particles from 'react-tsparticles';
 import React, { useCallback } from 'react';
-import { loadFull } from 'tsparticles';
-import { loadSlim } from "tsparticles-slim";
+import { loadSlim } from 'tsparticles-slim';
 
 const Particle = () => {
-
-  const particlesInit = useCallback(async (engine) => {
-    console.log(engine);
-    //await loadFull(engine);
+  const particlesInit = useCallback(async engine => {
     await loadSlim(engine);
   }, []);
 
+  /* ───────────────────────── Observe Particles to console ──────────────────────────── */
+  // const particlesLoaded = useCallback(async container => {
+  //   await console.log('Particles loaded:', container);
+  // }, []);
 
-  const particlesLoaded = useCallback(async (container) => {
-    await console.log(container);
-  }, []);
-  
-  return( 
-   <Particles
-      id='tsparticles'
-      init={particlesInit}
-      loaded={particlesLoaded}
-      width="100%"
-      height="100%"
-      options={{
+  /* ──────────────────────────── Send Particles to back ─────────────────────────────── */
+  //const particlesContainerRef = useRef(null);
+
+  // // Applique les styles au canvas pour le placer en arrière-plan
+  // useEffect(() => {
+  //   let observer = null;
+  //   let canvas = null;
+
+  //   // Fonction pour appliquer les styles au canvas
+  //   const applyCanvasStyles = () => {
+  //     // Sélectionne le canvas à l'intérieur du conteneur tsparticles
+  //     canvas = particlesContainerRef.current?.querySelector('canvas');
+  //     if (canvas) {
+  //       Object.assign(canvas.style, {
+  //         pointerEvents: 'none',
+  //         zIndex: '0',
+  //         position: 'fixed',
+  //         top: '0',
+  //         left: '0',
+  //         width: '100%',
+  //         height: '100%',
+  //       });
+  //     }
+  //   };
+
+  //   // Applique les styles immédiatement
+  //   applyCanvasStyles();
+
+  /* ───────────────────────── Disconnect Mouse to Particles ───────────────────────────── */
+  //   // Crée un observateur pour détecter les changements dans le conteneur tsparticles
+  //   if (particlesContainerRef.current) {
+  //     observer = new MutationObserver(mutations => {
+  //       mutations.forEach(mutation => {
+  //         // Vérifie si un canvas a été ajouté
+  //         if (mutation.addedNodes.length > 0) {
+  //           mutation.addedNodes.forEach(node => {
+  //             if (node.nodeName === 'CANVAS') {
+  //               applyCanvasStyles();
+  //             }
+  //           });
+  //         }
+  //       });
+  //     });
+
+  //     observer.observe(particlesContainerRef.current, {
+  //       childList: true, // Détecte l'ajout/suppression de nœuds
+  //     });
+  //   }
+
+  //   // Nettoyage
+  //   return () => {
+  //     if (observer) observer.disconnect();
+  //   };
+  // }, []);
+
+  return (
+    <div
+      //ref={particlesContainerRef}
+      style={{ position: 'fixed', zIndex: 0, pointerEvents: 'none' }}>
+      <Particles
+        id="tsparticles"
+        init={particlesInit}
+        //loaded={particlesLoaded}
+        options={{
           fps_limit: 60,
           interactivity: {
             detect_on: 'canvas',
@@ -36,7 +88,7 @@ const Particle = () => {
                 enable: true,
                 mode: 'push',
               },
-              resize: false,
+              resize: true,
             },
             modes: {
               grab: {
@@ -133,15 +185,10 @@ const Particle = () => {
             },
           },
           retina_detect: true,
-      }}
-      style={{
-        backgroundColor: 'transparent',
-        position: 'fixed',
-        width: '100%',
-        height: '100%',
-      }}
-    />
+        }}
+      />
+    </div>
   );
-}
+};
 
 export default Particle;

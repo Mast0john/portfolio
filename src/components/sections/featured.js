@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
 import Img from 'gatsby-image';
 import styled from 'styled-components';
 import sr from '@utils/sr';
 import { srConfig } from '@config';
 import { Icon } from '@components/icons';
-import { Link, Trans, useTranslation } from 'gatsby-plugin-react-i18next';
+import { Trans, useTranslation } from 'gatsby-plugin-react-i18next';
 
 const StyledProjectsGrid = styled.ul`
   ${({ theme }) => theme.mixins.resetList};
@@ -284,7 +284,7 @@ const Featured = () => {
     query {
       featured: allMarkdownRemark(
         filter: { fileAbsolutePath: { regex: "/featured/" } }
-        sort: { frontmatter: {date: DESC} }
+        sort: { frontmatter: { date: DESC } }
       ) {
         edges {
           node {
@@ -292,7 +292,7 @@ const Featured = () => {
               title
               cover {
                 childImageSharp {
-                  fluid(maxWidth: 700, traceSVG: { color: "#64ffda" }) {
+                  fluid(maxWidth: 1700, traceSVG: { color: "#64ffda" }) {
                     ...GatsbyImageSharpFluid_withWebp_tracedSVG
                   }
                 }
@@ -333,10 +333,12 @@ const Featured = () => {
               <StyledProject key={i} ref={el => (revealProjects.current[i] = el)}>
                 <div className="project-content">
                   <div>
-                    <p className="project-overline">{t("Featured Project")}</p>
+                    <p className="project-overline">{t('Featured Project')}</p>
 
                     <h3 className="project-title">
-                      <a href={external}><Trans>{title}</Trans></a>
+                      <a href={external}>
+                        <Trans>{title}</Trans>
+                      </a>
                     </h3>
 
                     {/* <div
@@ -344,8 +346,9 @@ const Featured = () => {
                       dangerouslySetInnerHTML={{ __html: html }}
                     /> */}
 
-                    <div className="project-description"><Trans>{descr}</Trans></div>
-
+                    <div className="project-description">
+                      <Trans>{descr}</Trans>
+                    </div>
 
                     {tech.length && (
                       <ul className="project-tech-list">

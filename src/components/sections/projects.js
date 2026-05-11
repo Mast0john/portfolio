@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { srConfig } from '@config';
 import sr from '@utils/sr';
 import { Icon } from '@components/icons';
-import { Trans, useTranslation } from 'gatsby-plugin-react-i18next';
+import { Trans } from 'gatsby-plugin-react-i18next';
 
 const StyledProjectsSection = styled.section`
   display: flex;
@@ -172,7 +172,7 @@ const Projects = () => {
           fileAbsolutePath: { regex: "/projects/" }
           frontmatter: { showInProjects: { ne: false } }
         }
-        sort: { frontmatter: {date: DESC} }
+        sort: { frontmatter: { date: DESC } }
       ) {
         edges {
           node {
@@ -207,10 +207,12 @@ const Projects = () => {
 
   return (
     <StyledProjectsSection>
-      <h2 ref={revealTitle}>Other Noteworthy Projects</h2>
+      <h2 ref={revealTitle}>
+        <Trans>Other Noteworthy Projects</Trans>
+      </h2>
 
       <Link className="inline-link archive-link" to="/archive" ref={revealArchiveLink}>
-        view the archive
+        <Trans>view the archive</Trans>
       </Link>
 
       <ul className="projects-grid">
@@ -280,7 +282,7 @@ const Projects = () => {
       </ul>
 
       <button className="more-button" onClick={() => setShowMore(!showMore)}>
-        Show {showMore ? 'Less' : 'More'}
+        <Trans>Show</Trans> {showMore ? 'Less' : 'More'}
       </button>
     </StyledProjectsSection>
   );

@@ -6,7 +6,7 @@ import { Layout, Skills } from '@components';
 import { graphql } from 'gatsby';
 
 const StyledMainContainer = styled.main`
-  counter-reset: section+2;
+  counter-reset: section + 2;
 `;
 
 const SkillPage = ({ location }) => (
@@ -23,11 +23,14 @@ SkillPage.propTypes = {
 
 export default SkillPage;
 
-export const query = (graphql`
-  query ($language: String!) {
+export const query = graphql`
+  query($language: String!) {
     locales: allLocale(
-      filter: { ns: { in: ["404","about", "contact", "translation", "jobs", "work", "resume", "skills"] },
-language: { eq: $language } }) {
+      filter: {
+        ns: { in: ["404", "about", "contact", "translation", "jobs", "work", "resume", "skills"] }
+        language: { eq: $language }
+      }
+    ) {
       edges {
         node {
           ns
@@ -37,4 +40,4 @@ language: { eq: $language } }) {
       }
     }
   }
-`);
+`;

@@ -90,6 +90,28 @@ const StyledNav = styled.nav`
   li {
     list-style-type: none;
   }
+
+  .resume-text-button {
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border-radius: 4px;
+    color: var(--text);
+    border: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    /* Style quand le bouton est actif */
+    &.active {
+      border: 2px solid var(--green);
+      color: var(--green);
+    }
+
+    /* Style au survol */
+    &:hover {
+      color: var(--green);
+    }
+  }
 `;
 
 const StyledLinks = styled.div`
@@ -153,7 +175,7 @@ const StyledLinks = styled.div`
 `;
 
 const Nav = ({ isHome }) => {
-  const { languages, originalPath } = useI18next();
+  const { languages, originalPath, changeLanguage, language } = useI18next();
   const [isMounted, setIsMounted] = useState(!isHome);
   const scrollDirection = useScrollDirection('down');
   const [scrolledToTop, setScrolledToTop] = useState(true);
@@ -182,6 +204,10 @@ const Nav = ({ isHome }) => {
   const timeout = isHome ? loaderDelay : 0;
   const fadeClass = isHome ? 'fade' : '';
   const fadeDownClass = isHome ? 'fadedown' : '';
+
+  const handleLanguageChange = lng => {
+    changeLanguage(lng); // Met à jour la langue globalement (Gatsby)
+  };
 
   return (
     <StyledHeader scrollDirection={scrollDirection} scrolledToTop={scrolledToTop}>
@@ -242,13 +268,23 @@ const Nav = ({ isHome }) => {
               <CSSTransition classNames={fadeDownClass} timeout={timeout}>
                 <div style={{ transitionDelay: `${isHome ? navLinks.length * 100 : 0}ms` }}>
                   <p className="resume-text">
-                    {languages.map(lng => (
-                      <li key={lng}>
-                        <Link className="resume-text-button" to={originalPath} language={lng}>
-                          <Icon name={lng === 'fr' ? 'fr' : 'en'} />
-                        </Link>
-                      </li>
-                    ))}
+                    {languages.map(lng => {
+                      const isActive = language === lng;
+                      return (
+                        <li key={lng}>
+                          <Link
+                            className={`resume-text-button ${isActive ? 'active' : ''}`}
+                            to={originalPath}
+                            language={lng}
+                            onClick={e => {
+                              e.preventDefault(); // Empêche la navigation par défaut
+                              handleLanguageChange(lng); // Met à jour la langue
+                            }}>
+                            <Icon name={lng === 'fr' ? 'fr' : 'en'} />
+                          </Link>
+                        </li>
+                      );
+                    })}
                     {/*rel="noopener noreferrer"*/}
                   </p>
                 </div>

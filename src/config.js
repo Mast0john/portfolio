@@ -4,15 +4,15 @@ module.exports = {
   socialMedia: [
     {
       name: 'GitHub',
-      url: 'https://github.com/Mast0john',
+      url: 'https://github.com/mast0john',
     },
     {
       name: 'Instagram',
       url: 'https://www.instagram.com/',
     },
     {
-      name: 'Twitter',
-      url: 'https://twitter.com/',
+      name: 'Discord',
+      url: 'discord://-/mast0john/310932233059958787',
     },
     {
       name: 'Linkedin',

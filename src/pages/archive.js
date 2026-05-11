@@ -7,6 +7,7 @@ import { srConfig } from '@config';
 import sr from '@utils/sr';
 import { Layout } from '@components';
 import { Icon } from '@components/icons';
+import { useTranslation } from 'gatsby-plugin-react-i18next';
 
 const StyledTableContainer = styled.div`
   margin: 100px -20px;
@@ -140,25 +141,27 @@ const ArchivePage = ({ location, data }) => {
     revealProjects.current.forEach((ref, i) => sr.reveal(ref, srConfig(i * 10)));
   }, []);
 
+  const { t } = useTranslation();
+
   return (
     <Layout location={location}>
       <Helmet title="Archive" />
 
       <main>
         <header ref={revealTitle}>
-          <h1 className="big-heading">Archive</h1>
-          <p className="subtitle">A big list of things I’ve worked on</p>
+          <h1 className="big-heading">{t('Archive')}</h1>
+          <p className="subtitle">{t('A big list of things I’ve worked on')}</p>
         </header>
 
         <StyledTableContainer ref={revealTable}>
           <table>
             <thead>
               <tr>
-                <th>Year</th>
+                <th>{t('Year')}</th>
                 <th>Title</th>
-                <th className="hide-on-mobile">Made at</th>
-                <th className="hide-on-mobile">Built with</th>
-                <th>Link</th>
+                <th className="hide-on-mobile">{t('Made at')}</th>
+                <th className="hide-on-mobile">{t('Built with')}</th>
+                <th>{t('Link')}</th>
               </tr>
             </thead>
             <tbody>
@@ -236,11 +239,11 @@ ArchivePage.propTypes = {
 
 export default ArchivePage;
 
-export const pageQuery = (graphql`
+export const pageQuery = graphql`
   {
     allMarkdownRemark(
       filter: { fileAbsolutePath: { regex: "/projects/" } }
-      sort: { frontmatter: {date: DESC} }
+      sort: { frontmatter: { date: DESC } }
     ) {
       edges {
         node {
@@ -259,4 +262,4 @@ export const pageQuery = (graphql`
       }
     }
   }
-`);
+`;

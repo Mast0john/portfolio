@@ -14,6 +14,7 @@ import {
   IconPlayStore,
   IconStar,
   IconTwitter,
+  IconDiscord,
   IconZap,
   IconFr,
   IconUk,
@@ -47,6 +48,8 @@ const Icon = ({ name }) => {
       return <IconStar />;
     case 'Twitter':
       return <IconTwitter />;
+    case 'Discord':
+      return <IconDiscord />;
     case 'Zap':
       return <IconZap />;
     case 'fr':

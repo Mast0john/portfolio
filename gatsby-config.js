@@ -11,6 +11,7 @@ module.exports = {
     twitterUsername: '@test',
   },
   plugins: [
+    `gatsby-remark-emojis`,
     `gatsby-plugin-dark-mode`,
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-styled-components`,
@@ -72,6 +73,14 @@ module.exports = {
               linkImagesToOriginal: true,
               quality: 90,
               tracedSVG: { color: config.colors.green },
+            },
+          },
+          {
+            // Use for Img creation from '/content/skills' folder
+            resolve: 'gatsby-source-filesystem',
+            options: {
+              name: 'skills',
+              path: `${__dirname}/content/skills`,
             },
           },
           {

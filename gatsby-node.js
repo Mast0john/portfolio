@@ -41,3 +41,24 @@ exports.onCreateWebpackConfig = ({ stage, loaders, actions }) => {
     },
   });
 };
+
+/* ──────────────────── Slug Generate w/ img in 'content/skills' ──────────────────── */
+
+exports.onCreateNode = ({ node, actions, getNode }) => {
+  const { createNodeField } = actions;
+
+  if (node.internal.type === `MarkdownRemark`) {
+    const fileNode = getNode(node.parent);
+    const slug = path
+      .relative(path.join(__dirname, 'content/skills'), fileNode.absolutePath)
+      .replace(/\\/g, '/') // Remplace les \ par / pour Windows
+      .replace(/\.md$/, '') // Supprime ".md"
+      .replace(/index$/, ''); // Supprime "index" à la fin
+
+    createNodeField({
+      node,
+      name: `slug`,
+      value: slug,
+    });
+  }
+};
