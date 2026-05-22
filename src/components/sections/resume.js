@@ -162,7 +162,6 @@ const Resume = () => {
   const [isLeftHovered, setIsLeftHovered] = useState(false);
   const [isRightHovered, setIsRightHovered] = useState(false);
   const [picDimensions, setPicDimensions] = useState({ width: 0, height: 0, x: 0, y: 0 });
-  const [isNeonHovered, setIsNeonHovered] = useState(false);
 
   // styledPic
   // Recadre le CV dans le rectangle stylisé
@@ -219,7 +218,7 @@ const Resume = () => {
         {/* CV avec Logo (gauche) */}
         <StyledPic
           ref={leftCVRef}
-          isHovered={(isLeftHovered, isNeonHovered)}
+          isHovered={isLeftHovered}
           onMouseEnter={() => setIsLeftHovered(true)}
           onMouseLeave={() => setIsLeftHovered(false)}>
           {' '}
@@ -251,7 +250,6 @@ const Resume = () => {
                   height={picDimensions.height}
                   top={0} // Position relative à StyledPic
                   left={0} // Position relative à StyledPic
-                  onHoverChange={setIsNeonHovered}
                   hovered={isLeftHovered} // État d'hover spécifique
                   side="left" // Img de gauche
                 />
@@ -262,7 +260,7 @@ const Resume = () => {
         {/* CV avec texte (droit) */}
         <StyledPic
           ref={rightCVRef}
-          isHovered={(isRightHovered, isNeonHovered)}
+          isHovered={isRightHovered}
           onMouseEnter={() => setIsRightHovered(true)}
           onMouseLeave={() => setIsRightHovered(false)}>
           {' '}
@@ -294,7 +292,6 @@ const Resume = () => {
                   height={picDimensions.height}
                   top={0}
                   left={0}
-                  onHoverChange={setIsNeonHovered}
                   hovered={isRightHovered} // État d'hover spécifique
                   side="right" // Img de droite
                 />
