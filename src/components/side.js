@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { CSSTransition, TransitionGroup } from '@utils/SafeAnimations';
 import styled from 'styled-components';
 import { loaderDelay } from '@utils';
 

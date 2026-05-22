@@ -1,26 +1,26 @@
-// i18next-extract-mark-ns-start resume
+// i18next-extract-mark-ns-start jobs
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Layout, Resume } from '@components';
+import { Layout, Experiences } from '@components';
 import { graphql } from 'gatsby';
 import { WithLocales } from '@utils/WithLocales';
 
 const StyledMainContainer = styled.main`
-  counter-reset: section + 5;
+  counter-reset: section + 3;
 `;
 
-const ResumePage = ({ location, data }) => (
+const ExperiencePage = ({ location, data }) => (
   <WithLocales data={data}>
     <Layout location={location}>
       <StyledMainContainer>
-        <Resume />
+        <Experiences />
       </StyledMainContainer>
     </Layout>
   </WithLocales>
 );
 
-ResumePage.propTypes = {
+ExperiencePage.propTypes = {
   location: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired,
 };
@@ -56,4 +56,4 @@ export const query = graphql`
   }
 `;
 
-export default ResumePage;
+export default ExperiencePage;

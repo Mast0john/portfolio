@@ -1,7 +1,7 @@
 ---
 date: '2019-07-08'
 title: 'Magento developer'
-company: "Afibel"
+company: 'Afibel'
 location: 'Lille, FR'
 range: 'July 2019 - March 2020'
 url: 'https://www.afibel.com/fr/'

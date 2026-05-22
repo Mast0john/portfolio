@@ -1,17 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import styled, { ThemeProvider } from 'styled-components';
 import { Head, Loader, Nav, Social, Email, Footer } from '@components';
 import { GlobalStyle, theme } from '@styles';
 import Particle from '../styles/particles';
-import StyledParticles from 'react-tsparticles';
-import DarkLightSwitch from './icons/DarkLightSwitch';
 
-import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
-import { loadSlim } from "tsparticles-slim";
-import ParticlesOptions from '../styles/ParticlesOptions';
+import styled, { ThemeProvider } from 'styled-components';
+import { darkTheme, lightTheme } from '../styles/theme';
 
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 // https://medium.com/@chrisfitkin/how-to-smooth-scroll-links-in-gatsby-3dc445299558
 if (typeof window !== 'undefined') {
@@ -55,38 +51,11 @@ const StyledContent = styled.div`
 `;
 
 const Layout = ({ children, location }) => {
-  const particlesInit = async (tsparticles) => {
-    console.log(tsparticles);
-
-    // you can initialize the tsParticles instance (main) here, adding custom shapes or presets
-    // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
-    // starting from v2 you can add only the features you need reducing the bundle size
-    //await loadFull(tsparticles);
-    await loadSlim(tsparticles);
-  };
-
-  const particlesLoaded = (container) => {
-    console.log(container);
-  };
-
   const isHome = location.pathname === '/';
   const [isLoading, setIsLoading] = useState(isHome);
 
-  // Sets target="_blank" rel="noopener noreferrer" on external links
-  const handleExternalLinks = () => {
-    const allLinks = Array.from(document.querySelectorAll('a'));
-    if (allLinks.length > 0) {
-      allLinks.forEach(link => {
-        if (link.host !== window.location.host) {
-          link.setAttribute('rel', 'noopener noreferrer');
-          link.setAttribute('target', '_blank');
-        }
-      });
-    }
-  };
-
   useEffect(() => {
-    if (isLoading) {
+    if (isLoading || typeof window === 'undefined') {
       return;
     }
 
@@ -101,25 +70,35 @@ const Layout = ({ children, location }) => {
       }, 0);
     }
 
-    handleExternalLinks();
-  }, [isLoading]);
+    if (typeof document !== 'undefined') {
+      const allLinks = Array.from(document.querySelectorAll('a'));
+      if (allLinks.length > 0) {
+        allLinks.forEach(link => {
+          if (link.host !== window.location.host) {
+            link.setAttribute('rel', 'noopener noreferrer');
+            link.setAttribute('target', '_blank');
+          }
+        });
+      }
+    }
+  }, [isLoading, location]);
 
   return (
-
     <>
-      <Head/>
+      <Head />
       <div id="root">
-      <Particle/>
-        <ThemeProvider theme={theme}>
-          <GlobalStyle/>
+        <Particle />
+
+        <ThemeProvider theme={theme === 'dark' ? darkTheme : lightTheme}>
+          <GlobalStyle />
           <SkipToContentLink href="#content">Skip to Content</SkipToContentLink>
 
           {isLoading && isHome ? (
             <Loader finishLoading={() => setIsLoading(false)} />
           ) : (
             <StyledContent>
+              {/* Nav, Social, Email */}
               <Nav isHome={isHome} />
-              <DarkLightSwitch isHome={isHome} />
               <Social isHome={isHome} />
               <Email isHome={isHome} />
 
@@ -132,7 +111,6 @@ const Layout = ({ children, location }) => {
         </ThemeProvider>
       </div>
     </>
-
   );
 };
 

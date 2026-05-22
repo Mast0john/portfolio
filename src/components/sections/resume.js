@@ -213,7 +213,7 @@ const Resume = () => {
   return (
     <StyledAboutSection id="resume" ref={revealContainer}>
       <h2 className="numbered-heading">
-        <Trans>Resume</Trans>
+        <Trans>Resume </Trans>
       </h2>
       <div className="inner">
         {/* CV avec Logo (gauche) */}

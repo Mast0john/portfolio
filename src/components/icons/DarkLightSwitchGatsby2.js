@@ -1,9 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { ThemeContext } from '../ThemeContext';
-import useSound from 'use-sound';
-import popUpOn from '../../sounds/switch-on.mp3';
-import popUpOff from '../../sounds/switch-off.mp3';
 
 const SwitchWrapper = styled.div`
   position: relative;
@@ -18,21 +15,20 @@ const SwitchWrapper = styled.div`
     position: absolute;
   }
 
-  button {
+  label {
     position: absolute;
     inset: 0;
     cursor: pointer;
     border-radius: 999px;
     transition: var(--transition);
+
     background: ${({ isDark }) => (isDark ? 'var(--light-navy)' : 'var(--lightest-slate)')};
+
     border: 1px solid var(--green);
+
     display: flex;
     align-items: center;
     padding: 4px;
-    appearance: none;
-    border: none;
-    color: inherit;
-    font: inherit;
   }
 
   .thumb {
@@ -40,44 +36,56 @@ const SwitchWrapper = styled.div`
     height: 22px;
     border-radius: 50%;
     transition: var(--transition);
+
     background: ${({ isDark }) => (isDark ? 'var(--green)' : 'var(--navy)')};
+
     transform: ${({ isDark }) => (isDark ? 'translateX(30px)' : 'translateX(0px)')};
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     color: ${({ isDark }) => (isDark ? 'var(--navy)' : 'var(--white)')};
+
     font-size: 12px;
   }
 
-  button:hover {
+  label:hover {
     box-shadow: 0 0 0 4px var(--green-tint);
   }
 `;
 
-const DarkLightSwitch = () => {
-  const { colorMode, setColorMode } = React.useContext(ThemeContext);
-  const [switchOn] = useSound(popUpOn, { volume: 0.25 });
-  const [switchOff] = useSound(popUpOff, { volume: 0.25 });
-
-  const isDark = (colorMode || 'dark') === 'dark';
+const DarkLightSwitch = ({ theme, toggleTheme, switchOn, switchOff }) => {
+  const isDark = theme === 'dark';
 
   const handleToggle = () => {
     const nextTheme = isDark ? 'light' : 'dark';
-    nextTheme === 'dark' ? switchOn() : switchOff();
-    setColorMode(nextTheme);
+
+    if (nextTheme === 'dark') {
+      switchOn();
+    } else {
+      switchOff();
+    }
+
+    toggleTheme(nextTheme);
   };
 
   return (
     <SwitchWrapper isDark={isDark}>
-      <button
-        type="button"
-        onClick={handleToggle}
-        aria-pressed={isDark}
-        aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}>
+      <input type="checkbox" id="theme-toggle" checked={isDark} onChange={handleToggle} />
+
+      <label htmlFor="theme-toggle">
         <div className="thumb">{isDark ? '☀' : '☾'}</div>
-      </button>
+      </label>
     </SwitchWrapper>
   );
+};
+
+DarkLightSwitch.propTypes = {
+  theme: PropTypes.oneOf(['light', 'dark']).isRequired,
+  toggleTheme: PropTypes.func.isRequired,
+  switchOn: PropTypes.func.isRequired,
+  switchOff: PropTypes.func.isRequired,
 };
 
 export default DarkLightSwitch;

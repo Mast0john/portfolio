@@ -560,7 +560,7 @@ const SKILLS_QUERY = graphql`
 
 /* ─── Filter Buttons ─────────────────────────────────────── */
 const FILTERS = [
-  { id: 'all', label: 'All', color: C.text, icon: '◈', glow: '#ffffff' },
+  { id: 'all', label: 'All', color: C.text, icon: '◈', glow: C.text },
   { id: 'hard', label: 'Hard Skills', color: C.purple, icon: '💻', glow: C.purple },
   { id: 'soft', label: 'Soft Skills', color: C.green, icon: '🗣️', glow: C.green },
   { id: 'mad', label: 'Mad Skills', color: C.yellow, icon: '⚡', glow: C.yellow },
@@ -706,10 +706,12 @@ const Skills = () => {
             animate="visible">
             {FILTERS.map(f => {
               const isActive = activeCategory === f.id;
+              const isAll = f.id === 'all';
+              const isAllActive = isActive && isAll;
               return (
                 <motion.button
                   key={f.id}
-                  className="filter-btn"
+                  className={`filter-btn ${isAllActive ? 'filter-btn--all-active' : ''}`}
                   style={{ '--c': f.color }}
                   variants={{
                     hidden: { opacity: 0, y: 30, scale: 0.85 },

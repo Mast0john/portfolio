@@ -1,7 +1,7 @@
 ---
 date: '2021-12'
 title: 'Web & ERP developer'
-company: "Progiteam"
+company: 'Progiteam'
 location: 'Tourcoing, FR'
 range: '2021 - 2023'
 url: 'https://www.progiteam.fr/'

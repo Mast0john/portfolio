@@ -12,7 +12,6 @@ module.exports = {
   },
   plugins: [
     `gatsby-remark-emojis`,
-    `gatsby-plugin-dark-mode`,
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-styled-components`,
     `gatsby-plugin-sharp`,

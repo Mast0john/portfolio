@@ -1,8 +1,19 @@
-import Particles from 'react-tsparticles';
 import React, { useCallback } from 'react';
-import { loadSlim } from 'tsparticles-slim';
+
+// Only require browser-only libs when running in the browser (avoid SSR errors)
+let Particles = null;
+let loadSlim = null;
+if (typeof window !== 'undefined') {
+  // eslint-disable-next-line global-require
+  Particles = require('react-tsparticles').default;
+  // eslint-disable-next-line global-require
+  loadSlim = require('tsparticles-slim').loadSlim;
+}
 
 const Particle = () => {
+  // Don't render particles during SSR
+  if (!Particles) {return null;}
+
   const particlesInit = useCallback(async engine => {
     await loadSlim(engine);
   }, []);
@@ -74,7 +85,6 @@ const Particle = () => {
       <Particles
         id="tsparticles"
         init={particlesInit}
-        //loaded={particlesLoaded}
         options={{
           fps_limit: 60,
           interactivity: {

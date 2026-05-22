@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { CSSTransition, TransitionGroup } from '@utils/SafeAnimations';
 import styled from 'styled-components';
 import { email } from '@config';
 import { navDelay, loaderDelay } from '@utils';
-import { Link, Trans, useTranslation } from 'gatsby-plugin-react-i18next';
-import { useStaticQuery, graphql } from 'gatsby';
-
+import { Trans, useTranslation } from 'gatsby-plugin-react-i18next';
 
 const StyledHeroSection = styled.section`
   ${({ theme }) => theme.mixins.flexCenter};
@@ -32,7 +30,8 @@ const StyledHeroSection = styled.section`
     text-decoration: none;
     color: #fff;
   }
-  .glitch:before, .glitch:after {
+  .glitch:before,
+  .glitch:after {
     display: block;
     content: 'Jonathan Heyman.';
     position: absolute;
@@ -110,14 +109,20 @@ const Hero = () => {
     return () => clearTimeout(timeout);
   }, []);
 
-  const one = <h1><Trans>Hi, my name is</Trans></h1>;
+  const one = (
+    <h1>
+      <Trans>Hi, my name is</Trans>
+    </h1>
+  );
   const two = <h2 className="big-heading glitch">Jonathan Heyman.</h2>;
-  const three = <h3 className="big-heading">{t("I build things for the web.")}</h3>;
+  const three = <h3 className="big-heading">{t('I build things for the web.')}</h3>;
   const four = (
-    <p><Trans>
-      I'm a software engineer based in Lille, FR specializing in building (and occasionally
-      designing) exceptional websites, applications, and everything in between.
-    </Trans></p>
+    <p>
+      <Trans>
+        I'm a software engineer based in Lille, FR specializing in building (and occasionally
+        designing) exceptional websites, applications, and everything in between.
+      </Trans>
+    </p>
   );
   const five = (
     <a href={`mailto:${email}`} className="email-link">
@@ -131,11 +136,11 @@ const Hero = () => {
     <StyledHeroSection>
       <TransitionGroup component={null}>
         {isMounted &&
-        items.map((item, i) => (
-          <CSSTransition key={i} classNames="fadeup" timeout={loaderDelay}>
-            <div style={{ transitionDelay: `${i + 1}00ms` }}>{item}</div>
-          </CSSTransition>
-        ))}
+          items.map((item, i) => (
+            <CSSTransition key={i} classNames="fadeup" timeout={loaderDelay}>
+              <div style={{ transitionDelay: `${i + 1}00ms` }}>{item}</div>
+            </CSSTransition>
+          ))}
       </TransitionGroup>
     </StyledHeroSection>
   );

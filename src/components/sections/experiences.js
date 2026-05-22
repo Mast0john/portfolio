@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
-import { CSSTransition } from 'react-transition-group';
+import { CSSTransition } from '@utils/SafeAnimations';
 import styled from 'styled-components';
 import { srConfig } from '@config';
 import { KEY_CODES } from '@utils';
 import sr from '@utils/sr';
-import { Link, Trans, useTranslation } from 'gatsby-plugin-react-i18next';
+import { useTranslation } from 'gatsby-plugin-react-i18next';
 
-const StyledJobsSection = styled.section`
+const StyledExperiencesSection = styled.section`
   max-width: 700px;
 
   .inner {
@@ -151,13 +151,13 @@ const StyledTabPanel = styled.div`
   }
 `;
 
-const Jobs = () => {
+const Experiences = () => {
   const { t } = useTranslation();
 
   const data = useStaticQuery(graphql`
     query {
-      jobs: allMarkdownRemark(
-        filter: { fileAbsolutePath: { regex: "/jobs/" } }
+      experiences: allMarkdownRemark(
+        filter: { fileAbsolutePath: { regex: "/experiences/" } }
         sort: { frontmatter: { date: DESC } }
       ) {
         edges {
@@ -176,7 +176,7 @@ const Jobs = () => {
     }
   `);
 
-  const jobsData = data.jobs.edges;
+  const experiencesData = data.experiences.edges;
 
   const [translatedHtmls, setTranslatedHtmls] = useState([]);
 
@@ -211,10 +211,12 @@ const Jobs = () => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const newTranslatedHtmls = jobsData.map(({ node }) => translateHtmlContent(node.html, t));
+      const newTranslatedHtmls = experiencesData.map(({ node }) =>
+        translateHtmlContent(node.html, t),
+      );
       setTranslatedHtmls(newTranslatedHtmls);
     }
-  }, [t, jobsData]);
+  }, [t, experiencesData]);
 
   const [activeTabId, setActiveTabId] = useState(0);
   const [tabFocus, setTabFocus] = useState(null);
@@ -263,13 +265,13 @@ const Jobs = () => {
   };
 
   return (
-    <StyledJobsSection id="jobs" ref={revealContainer}>
-      <h2 className="numbered-heading">{t('Where I’ve Worked')}</h2>
+    <StyledExperiencesSection id="experiences" ref={revealContainer}>
+      <h2 className="numbered-heading">{t('Experiences')}</h2>
 
       <div className="inner">
         <StyledTabList role="tablist" aria-label="Job tabs" onKeyDown={e => onKeyDown(e)}>
-          {jobsData &&
-            jobsData.map(({ node }, i) => {
+          {experiencesData &&
+            experiencesData.map(({ node }, i) => {
               const { company } = node.frontmatter;
               return (
                 <StyledTabButton
@@ -290,8 +292,8 @@ const Jobs = () => {
         </StyledTabList>
 
         <StyledTabPanels>
-          {jobsData &&
-            jobsData.map(({ node }, i) => {
+          {experiencesData &&
+            experiencesData.map(({ node }, i) => {
               const { frontmatter, html } = node;
               const { title, url, company, range } = frontmatter;
 
@@ -321,8 +323,8 @@ const Jobs = () => {
             })}
         </StyledTabPanels>
       </div>
-    </StyledJobsSection>
+    </StyledExperiencesSection>
   );
 };
 
-export default Jobs;
+export default Experiences;

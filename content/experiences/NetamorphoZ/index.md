@@ -1,7 +1,7 @@
 ---
 date: '2015-02-01'
 title: 'IT Dev Intern'
-company: "NetamorphoZ"
+company: 'NetamorphoZ'
 location: 'Arras, FR'
 range: 'Feb - May 2015'
 url: 'https://www.netamorphoz.fr/'

@@ -2,7 +2,8 @@ import { createGlobalStyle } from 'styled-components';
 import Fonts from './fonts';
 import TransitionStyles from './TransitionStyles';
 import PrismStyles from './PrismStyles';
-import DarkLightStyle from './DarkLightStyle';
+// import Dark from './old/dark.js';
+// import Light from './old/light.js';
 
 const GlobalStyle = createGlobalStyle`
   ${Fonts};
@@ -18,6 +19,7 @@ const GlobalStyle = createGlobalStyle`
     --lightest-slate: #ccd6f6;
     --white: #e6f1ff;
     --green: #64ffda;
+    --dark-green: #42a78f;
     --green-tint: rgba(100, 255, 218, 0.1);
 
     --font-sans: 'Calibre', 'San Francisco', 'SF Pro Text', -apple-system, system-ui, sans-serif;
@@ -77,11 +79,15 @@ const GlobalStyle = createGlobalStyle`
     overflow-x: hidden;
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
-    background-color: var(--navy);
-    color: var(--slate);
+    /* background-color: var(--navy); */
+    /* color: var(--slate); */
     font-family: var(--font-sans);
     font-size: var(--fz-xl);
     line-height: 1.3;
+
+    transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 
     @media (max-width: 480px) {
       font-size: var(--fz-lg);
@@ -107,7 +113,7 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
-  body.dark {
+  html.dark {
     margin: 0;
     width: 100%;
     min-height: 100%;
@@ -144,7 +150,7 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
-  body.light {
+  html.light {
     margin: 0;
     width: 100%;
     min-height: 100%;
@@ -152,10 +158,12 @@ const GlobalStyle = createGlobalStyle`
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
     background-color: var(--white);
-    color: var(--slate);
+    color: var(--dark-navy);
     font-family: var(--font-sans);
     font-size: var(--fz-xl);
     line-height: 1.3;
+    --light-slate: #383b46;
+    --green: #42a78f;
 
     @media (max-width: 480px) {
       font-size: var(--fz-lg);
@@ -179,6 +187,124 @@ const GlobalStyle = createGlobalStyle`
         user-select: none;
       }
     }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: var(--lightest-navy);
+    }
+
+    .numbered-heading {
+
+      &:before {
+        color: var(--dark-green);
+
+      }
+    }
+
+    a {
+      color: inherit;
+
+      &:hover,
+      &:focus {
+        color: var(--dark-green);
+      }
+    }
+
+    p {
+      & > a {
+        color: var(--dark-green);
+      }
+      & > code {
+        background-color: var(--light-navy);
+        color: var(--white);
+        font-size: var(--fz-sm);
+        border-radius: var(--border-radius);
+        padding: 0.3em 0.5em;
+      }
+    }
+
+    ul {
+      &.fancy-list {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        font-size: var(--fz-lg);
+        li {
+          position: relative;
+          padding-left: 30px;
+          margin-bottom: 10px;
+          &:before {
+            content: '⇢';
+            position: absolute;
+            left: 0;
+            color: var(--dark-green);
+          }
+        }
+      }
+    }
+
+
+    blockquote {
+      border-left-color: var(--dark-green);
+    }
+
+    .overline {
+      color: var(--dark-green);
+    }
+
+    .subtitle {
+      color: var(--dark-green);
+    }
+
+    .breadcrumb {
+      color: var(--dark-green);
+    }
+
+    .filter-btn--all-active {
+      border-color: var(--dark-green) !important;
+      color: var(--dark-green) !important;
+      background: rgba(var(--dark-green), 0.133) !important;
+      box-shadow: rgba(var(--dark-green), 0.5) 0 0 24px  !important;
+    }
+
+    .filter-btn--all-active .filter-dot {
+      background: var(--dark-green) !important;
+      box-shadow: 0 0 12px rgba(var(--dark-green-rgb), 0.8) !important;
+    }
+
+    .filters .filter-btn__icon{
+      color: #020c1b;
+      border-color: #020c1b;
+
+      #text{
+        color: #020c1b;
+      }
+    }
+
+    .project-content .project-title {
+      color: var(--lightest-navy);
+    }
+
+    .project-description{
+      color: white;
+    }
+
+    .project-links {
+      color: var(--lightest-navy);
+    }
+
+    .project-top .project-links {
+      color: var(--white);
+    }
+
+    .project-tech-list{
+      color: var(--dark-green);
+    }
+
   }
 
   #root {
@@ -496,73 +622,82 @@ const GlobalStyle = createGlobalStyle`
     height: 100%;
   }
 
-  // Dark mode toggle button
-        .dark-button {
-          box-sizing: border-box;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-top: -3px;
-
-          &:before,
-          &:after {
-            box-sizing: border-box;
-          }
-
-          label {
-            position: relative;
-            display: block;
-            width: 45px;
-            height: 25px;
-            border-radius: 100px;
-            background-color: rgb(37, 37, 37);
-            overflow: hidden;
-            cursor: pointer;
-
-            &:before,
-            &:after {
-              display: block;
-              position: absolute;
-              content: "";
-              width: 19px;
-              height: 19px;
-              border-radius: 50%;
-              top: 3px;
-              left: 3px;
-              transition: 0.4s ease;
-            }
-
-            &:before {
-              background-color: rgb(255, 255, 255);
-            }
-
-            &:after {
-              background-color: rgb(37, 37, 37);
-              left: -58px;
-              transform: scale(0.00001);
-            }
-          }
-
-          input[type="checkbox"] {
-            display: none;
-
-            &:checked + label {
-              &:before {
-                background-color: rgb(1, 219, 198);
-                transform: translateX(20px);
-              }
-
-              &:after {
-                transform: translateX(75px) scale(1);
-              }
-            }
-          }
-
   ${TransitionStyles};
 
   ${PrismStyles};
 
-  ${DarkLightStyle}
+
+  // Old V1 Custom Dark Button 
+
+  /* .dark-button {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -3px;
+
+    &:before,
+    &:after {
+      box-sizing: border-box;
+    }
+
+    label {
+      position: relative;
+      display: block;
+      width: 45px;
+      height: 25px;
+      border-radius: 100px;
+      background-color: rgb(37, 37, 37);
+      overflow: hidden;
+      cursor: pointer;
+
+      &:before,
+      &:after {
+        display: block;
+        position: absolute;
+        content: "";
+        width: 19px;
+        height: 19px;
+        border-radius: 50%;
+        top: 3px;
+        left: 3px;
+        transition: 0.4s ease;
+      }
+
+      &:before {
+        background-color: rgb(255, 255, 255);
+      }
+
+      &:after {
+        background-color: rgb(37, 37, 37);
+        left: -58px;
+        transform: scale(0.00001);
+      }
+    }
+
+    input[type="checkbox"] {
+      display: none;
+
+      &:checked + label {
+        &:before {
+          background-color: rgb(1, 219, 198);
+          transform: translateX(20px);
+        }
+
+        &:after {
+          transform: translateX(75px) scale(1);
+        }
+      }
+    }
+} */
+
+// Old V2 Custom Dark Button in styles/old
+
+/* suppr the point between $ and { */
+
+    /* $.{Dark}; */
+
+    /* $.{Light};  */
 
 `;
 

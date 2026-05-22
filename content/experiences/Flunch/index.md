@@ -1,7 +1,7 @@
 ---
 date: '2013-01-23'
 title: 'Crew Member'
-company: "Flunch"
+company: 'Flunch'
 location: 'Arras, FR'
 range: 'Jan 2013 - June 2019'
 url: 'https://www.flunch.fr/'

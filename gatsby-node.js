@@ -6,21 +6,30 @@
 
 const path = require('path');
 
+exports.onCreatePage = ({ page, actions }) => {
+  const { createPage } = actions;
+  createPage({
+    ...page,
+    context: {
+      ...page.context,
+      // 👇 Injecte la langue dans chaque page (déjà fait par gatsby-plugin-react-i18next)
+      // Pas besoin de modifier, le plugin le fait automatiquement
+    },
+  });
+};
+
 // https://www.gatsbyjs.org/docs/node-apis/#onCreateWebpackConfig
 exports.onCreateWebpackConfig = ({ stage, loaders, actions }) => {
   // https://www.gatsbyjs.org/docs/debugging-html-builds/#fixing-third-party-modules
-  if (stage === 'build-html') {
+  if (stage === 'build-html' || stage === 'develop-html') {
     actions.setWebpackConfig({
       module: {
         rules: [
-          {
-            test: /scrollreveal/,
-            use: loaders.null(),
-          },
-          {
-            test: /animejs/,
-            use: loaders.null(),
-          },
+          { test: /scrollreveal/, use: loaders.null() },
+          { test: /animejs/, use: loaders.null() },
+          { test: /miniraf/, use: loaders.null() },
+          { test: /react-tsparticles/, use: loaders.null() },
+          { test: /tsparticles/, use: loaders.null() },
         ],
       },
     });
@@ -37,6 +46,10 @@ exports.onCreateWebpackConfig = ({ stage, loaders, actions }) => {
         '@pages': path.resolve(__dirname, 'src/pages'),
         '@styles': path.resolve(__dirname, 'src/styles'),
         '@utils': path.resolve(__dirname, 'src/utils'),
+        // // Alias qui remplace framer-motion par notre version safe
+        // 'framer-motion': path.resolve(__dirname, 'src/components/SafeAnimations.js'),
+        // // Alias qui remplace react-transition-group par notre version safe
+        // 'react-transition-group': path.resolve(__dirname, 'src/components/SafeAnimations.js'),
       },
     },
   });

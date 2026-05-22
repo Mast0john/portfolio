@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
-import { Link, useI18next } from 'gatsby-plugin-react-i18next'; // ✅ Import correct pour la gestion i18n
+import { Link, useI18next, Trans } from 'gatsby-plugin-react-i18next';
 import styled from 'styled-components';
 import { navLinks } from '@config';
 import { KEY_CODES, loaderDelay } from '@utils';
 import { useOnClickOutside } from '@hooks';
-import { ThemeToggler } from 'gatsby-plugin-dark-mode';
-import useSound from 'use-sound';
-import popUpOn from '../sounds/switch-on.mp3';
-import popUpOff from '../sounds/switch-off.mp3';
 import { Icon } from '@components/icons';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { CSSTransition, TransitionGroup } from '@utils/SafeAnimations';
+import DarkLightSwitch from '@components/icons/DarkLightSwitch';
+import { ThemeToggler } from 'gatsby-plugin-dark-mode';
 
 const StyledMenu = styled.div`
   display: none;
@@ -250,10 +248,6 @@ const Menu = ({ isHome }) => {
     }
   };
 
-  const [isChecked, setIsChecked] = useState(false);
-  const [switchOn] = useSound(popUpOn, { volume: 0.25 });
-  const [switchOff] = useSound(popUpOff, { volume: 0.25 });
-
   useEffect(() => {
     document.addEventListener('keydown', onKeyDown);
     window.addEventListener('resize', onResize);
@@ -297,7 +291,7 @@ const Menu = ({ isHome }) => {
                 {navLinks.map(({ url, name }, i) => (
                   <li key={i}>
                     <Link to={url} onClick={() => setMenuOpen(false)}>
-                      {name}
+                      <Trans>{name}</Trans>
                     </Link>
                   </li>
                 ))}
@@ -329,22 +323,7 @@ const Menu = ({ isHome }) => {
             <p>
               <ThemeToggler>
                 {({ theme, toggleTheme }) => (
-                  <div className={'dark-button'}>
-                    <input
-                      type={'checkbox'}
-                      id={'toggle'}
-                      onChange={e =>
-                        toggleTheme(e.target.checked ? 'dark' : 'light') && setIsChecked(isChecked)
-                      }
-                      checked={theme === 'dark'}
-                      onClick={() => {
-                        const switchLight = theme === 'dark' ? switchOn() : switchOff();
-                        toggleTheme(switchLight);
-                      }}
-                    />
-                    {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-                    <label htmlFor={'toggle'}></label>
-                  </div>
+                  <DarkLightSwitch theme={theme} toggleTheme={toggleTheme} />
                 )}
               </ThemeToggler>
             </p>

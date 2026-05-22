@@ -154,7 +154,7 @@ const About = () => {
             <p>
               <Trans>Shortly after graduating from </Trans>{' '}
               <a href="https://arras.cesi.fr/ecoles-formations/">{t('Exia Cesi School')}</a>
-              {t(', I started as a Freelance and after I joined the engineering team at')}
+              {t(', I started as a Freelance and after I joined the engineering team at')}{' '}
               <a href="https://www.afibel.com/fr/">Afibel</a>{' '}
               <Trans>
                 where I worked on a wide variety of interesting and meaningful projects on a daily

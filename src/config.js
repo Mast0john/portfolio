@@ -38,12 +38,12 @@ module.exports = {
       url: '/skills',
     },
     {
-      name: 'Exp',
-      url: '/jobs',
+      name: 'Experiences',
+      url: '/experiences',
     },
     {
-      name: 'Work',
-      url: '/work',
+      name: 'Projects',
+      url: '/projects',
     },
     {
       name: 'Resume',

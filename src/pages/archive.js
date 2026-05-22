@@ -7,7 +7,7 @@ import { srConfig } from '@config';
 import sr from '@utils/sr';
 import { Layout } from '@components';
 import { Icon } from '@components/icons';
-import { useTranslation } from 'gatsby-plugin-react-i18next';
+import { Trans, useTranslation } from 'gatsby-plugin-react-i18next';
 
 const StyledTableContainer = styled.div`
   margin: 100px -20px;
@@ -130,7 +130,10 @@ const StyledTableContainer = styled.div`
 `;
 
 const ArchivePage = ({ location, data }) => {
-  const projects = data.allMarkdownRemark.edges;
+  // Access the projects data using the alias
+  const projects = data.projects.edges;
+  // Access the locales data using the alias
+  // const locales = data.locales.edges;
   const revealTitle = useRef(null);
   const revealTable = useRef(null);
   const revealProjects = useRef([]);
@@ -158,7 +161,7 @@ const ArchivePage = ({ location, data }) => {
             <thead>
               <tr>
                 <th>{t('Year')}</th>
-                <th>Title</th>
+                <th>{t('Title')}</th>
                 <th className="hide-on-mobile">{t('Made at')}</th>
                 <th className="hide-on-mobile">{t('Built with')}</th>
                 <th>{t('Link')}</th>
@@ -181,7 +184,9 @@ const ArchivePage = ({ location, data }) => {
                     <tr key={i} ref={el => (revealProjects.current[i] = el)}>
                       <td className="overline year">{`${new Date(date).getFullYear()}`}</td>
 
-                      <td className="title">{title}</td>
+                      <td className="title">
+                        <Trans>{title}</Trans>
+                      </td>
 
                       <td className="company hide-on-mobile">
                         {company ? <span>{company}</span> : <span>—</span>}
@@ -240,8 +245,8 @@ ArchivePage.propTypes = {
 export default ArchivePage;
 
 export const pageQuery = graphql`
-  {
-    allMarkdownRemark(
+  query($language: String!) {
+    projects: allMarkdownRemark(
       filter: { fileAbsolutePath: { regex: "/projects/" } }
       sort: { frontmatter: { date: DESC } }
     ) {
@@ -258,6 +263,33 @@ export const pageQuery = graphql`
             company
           }
           html
+        }
+      }
+    }
+
+    locales: allLocale(
+      filter: {
+        ns: {
+          in: [
+            "404"
+            "about"
+            "contact"
+            "archive"
+            "translation"
+            "experiences"
+            "projects"
+            "resume"
+            "skills"
+          ]
+        }
+        language: { eq: $language }
+      }
+    ) {
+      edges {
+        node {
+          ns
+          data
+          language
         }
       }
     }

@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { CSSTransition, TransitionGroup } from '@utils/SafeAnimations';
 import styled, { css } from 'styled-components';
 import { navLinks } from '@config';
 import { loaderDelay } from '@utils';
 import { useScrollDirection } from '@hooks';
 import { Menu } from '@components';
 import { IconLogo, Icon } from '@components/icons';
-import { ThemeToggler } from 'gatsby-plugin-dark-mode';
-import useSound from 'use-sound';
-import popUpOn from '../sounds/switch-on.mp3';
-import popUpOff from '../sounds/switch-off.mp3';
-import { Link, useI18next } from 'gatsby-plugin-react-i18next';
+import { Link, Trans, useI18next } from 'gatsby-plugin-react-i18next';
+
+import DarkLightSwitch from './icons/DarkLightSwitch.js';
 
 const StyledHeader = styled.header`
   ${({ theme }) => theme.mixins.flexBetween};
@@ -179,10 +177,6 @@ const Nav = ({ isHome }) => {
   const [isMounted, setIsMounted] = useState(!isHome);
   const scrollDirection = useScrollDirection('down');
   const [scrolledToTop, setScrolledToTop] = useState(true);
-  const [isChecked, setIsChecked] = useState(false);
-
-  const [switchOn] = useSound(popUpOn, { volume: 0.25 });
-  const [switchOff] = useSound(popUpOff, { volume: 0.25 });
 
   const handleScroll = () => {
     setScrolledToTop(window.pageYOffset < 50);
@@ -229,27 +223,33 @@ const Nav = ({ isHome }) => {
             </CSSTransition>
           )}
         </TransitionGroup>
+
         <StyledLinks>
-          <ThemeToggler>
+          {/* <ThemeToggler>
             {({ theme, toggleTheme }) => (
-              <div className={'dark-button'}>
-                <input
-                  type={'checkbox'}
-                  id={'toggle'}
-                  onChange={e =>
-                    toggleTheme(e.target.checked ? 'dark' : 'light') && setIsChecked(isChecked)
-                  }
-                  checked={theme === 'dark'}
-                  onClick={() => {
-                    const switchLight = theme === 'dark' ? switchOn() : switchOff();
-                    toggleTheme(switchLight);
-                  }}
-                />
-                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-                <label htmlFor={'toggle'}></label>
-              </div>
+              <DarkLightSwitch
+                onChange={e => toggleTheme(e ? 'dark' : 'light')}
+                checked={theme === 'dark'}
+                size={80}
+                speed={2}
+              />
             )}
-          </ThemeToggler>
+          </ThemeToggler> */}
+
+          {/* DARK / LIGHT SWITCH */}
+          {/* <ThemeToggler>
+            {({ theme, toggleTheme }) => (
+              <DarkLightSwitch
+                theme={theme}
+                toggleTheme={toggleTheme}
+                switchOn={switchOn}
+                switchOff={switchOff}
+              />
+            )}
+          </ThemeToggler> */}
+          <DarkLightSwitch />
+
+          {/* NAV LINKS */}
           <ol>
             <TransitionGroup component={null}>
               {isMounted &&
@@ -257,12 +257,16 @@ const Nav = ({ isHome }) => {
                 navLinks.map(({ url, name }, i) => (
                   <CSSTransition key={i} classNames={fadeDownClass} timeout={timeout}>
                     <li key={i} style={{ transitionDelay: `${isHome ? i * 100 : 0}ms` }}>
-                      <Link to={url}>{name}</Link>
+                      <Link to={url}>
+                        <Trans>{name}</Trans>
+                      </Link>
                     </li>
                   </CSSTransition>
                 ))}
             </TransitionGroup>
           </ol>
+
+          {/* LANGUAGE SWITCH */}
           <TransitionGroup component={null}>
             {isMounted && (
               <CSSTransition classNames={fadeDownClass} timeout={timeout}>
